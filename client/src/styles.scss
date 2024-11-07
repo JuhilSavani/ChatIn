@@ -1,0 +1,80 @@
+$primary-black: #000000;
+$secondary-black: #191919;
+$primary-white: #FFFFFF;
+$secondary-white: #E6E6E6;
+
+$font-sm: 1.05rem;
+$font-md: 1.25rem;    
+$font-lg: 1.5rem; 
+$font-xl: 2.5rem;
+$font-xxl: 4.5rem;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 550;
+
+  color-scheme: light dark;
+  background-color: $secondary-white;
+  color: $secondary-black;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-user-drag: none;
+}
+
+a { 
+  text-decoration: none; 
+  color: inherit;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100vw - 1rem);
+  padding: 0 2rem;
+  margin: 0.5rem 0;
+  z-index: 1;
+  border-radius: 15px;
+  border: 1px solid rgba(16, 16, 16, 0.5);    
+  border-bottom: 5px solid rgba(16, 16, 16, 0.5);
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+
+  span {
+    font-size: $font-xl;
+    font-weight: 600;
+  }
+
+  ul {
+    display: flex;
+    list-style: none;
+    gap: 5rem;
+  }
+
+  li { 
+    font-size: $font-md; 
+  }
+}
+
+#app{
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+}
