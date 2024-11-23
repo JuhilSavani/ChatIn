@@ -5,11 +5,16 @@ const Navbar = () => {
   return (
     <header>
       <nav>
-        <span><Link>Logo</Link></span>
+        <span>
+          <Link>ChatIn'</Link>
+        </span>
         <ul>
-          <li><NavLink to="/">Home</NavLink></li>
-          <li><NavLink to="/about">About</NavLink></li>
-          <li><NavLink to="/sign-in">Login</NavLink></li>
+          <li>
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/about">About</NavLink>
+          </li>
         </ul>
       </nav>
     </header>

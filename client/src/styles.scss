@@ -1,7 +1,11 @@
-$primary-black: #000000;
-$secondary-black: #191919;
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+$primary-black: #333;
+$secondary-black: #444;
 $primary-white: #FFFFFF;
-$secondary-white: #E6E6E6;
+$secondary-white: #F8F0DF; // #F3EFE0 #F8F0DF #FEFBF3 #F7F5F2
+$beige: #FCF9C6 ; // #F9F4DA  #FAEED1 #FCF9C6
+$bisque: #FDE49E;
 
 $font-sm: 1.05rem;
 $font-md: 1.25rem;    
@@ -10,13 +14,12 @@ $font-xl: 2.5rem;
 $font-xxl: 4.5rem;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 550;
+  font-family: Rubik, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  // font-weight: 550;
 
   color-scheme: light dark;
   background-color: $secondary-white;
-  color: $secondary-black;
+  color: $primary-black;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -32,6 +35,9 @@ $font-xxl: 4.5rem;
   -webkit-user-drag: none;
 }
 
+*::selection{
+  background-color: $bisque;
+}
 a { 
   text-decoration: none; 
   color: inherit;
@@ -43,12 +49,13 @@ header {
   left: 50%;
   transform: translateX(-50%);
   width: calc(100vw - 1rem);
-  padding: 0 2rem;
+  padding: 0 2.5rem;
   margin: 0.5rem 0;
   z-index: 1;
+  background-color: $primary-white;
   border-radius: 15px;
-  border: 1px solid rgba(16, 16, 16, 0.5);    
-  border-bottom: 5px solid rgba(16, 16, 16, 0.5);
+  border: 2px solid rgba(16, 16, 16, 0.65);    
+  border-bottom: 5px solid rgba(16, 16, 16, 0.65);
 }
 
 header nav {
@@ -64,8 +71,10 @@ header nav {
 
   ul {
     display: flex;
+    align-items: center;
     list-style: none;
     gap: 5rem;
+    padding: 0 2rem;
   }
 
   li { 
@@ -74,7 +83,68 @@ header nav {
 }
 
 #app{
-  display: grid;
-  place-content: center;
-  min-height: 100vh;
+  padding-top: 95px;
+  .page{
+    padding: 5rem 10rem;
+  }
+}
+
+.home .container{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  h1 {
+    text-align: center;
+    font-size: 1.25 * $font-xxl;
+    transform:  skew(-20deg); 
+    text-shadow: 4px 4px 6px rgba(16, 16, 16, 0.5);
+    padding-bottom: 0.5rem;
+    border-bottom: 5px dashed $primary-black;
+  }
+
+  p{
+    text-align: center;
+    font-size: 1.25 * $font-md;
+    margin-top: 1rem;
+  }
+
+  section:nth-child(2){
+    display: block;
+    margin: 0rem auto;
+    width: fit-content;
+  }
+
+  button{
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    border: 2px solid rgba(16, 16, 16, 0.65);
+    border-bottom: 5px solid rgba(16, 16, 16, 0.65);
+    color: inherit;
+    font-size: $font-lg;
+    background: $beige;
+    transition: 0.3s ease;
+    &:hover{
+      box-shadow: 6px 6px 6px rgba(16, 16, 16, 0.25);
+    }
+  }
+}
+
+.about .container{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0 5rem;
+  h2{
+    font-size: 1.25 * $font-lg;
+    width: 350px;
+    border-bottom: 3px dashed $primary-black;
+    padding-bottom: 0.25rem;
+  }
+
+  p{
+    margin-top: 0.5rem;
+    font-size: $font-md;
+  }
 }

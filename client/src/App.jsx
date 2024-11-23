@@ -8,8 +8,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
+import Chat from "./pages/Chat";
 import Navbar from "./components/Navbar";
 
 // Define a layout component
@@ -28,8 +27,7 @@ const routes = createRoutesFromElements(
     {/* Public */}
     <Route index element={<Home />} />
     <Route path="about" element={<About />} />
-    <Route path="sign-in" element={<SignIn />} />
-    <Route path="sign-up" element={<SignUp />} />
+    <Route path="chat" element={<Chat />} />
   </Route>
 );
 
