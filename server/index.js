@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import { connectPostgres } from "./config/sequelize.config.js"
 import { configPassport } from "./config/passport.config.js";
+import authRoutes from "./routes/authorize.routes.js";
 
 configDotenv();
 
@@ -27,6 +28,19 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize()); // Initialize passport 
+
+// Testing Routes
+app.get('/api/test/get', (req, res) => {
+  return res.status(200).send('[GET] 200: OK');
+});
+
+app.post('/api/test/post', (req, res) => {
+  return res.status(200).json({ message:'[POST] 200: OK', received: req.body });
+});
+
+// Actual Routes
+app.use("/api/authorize", authRoutes);
+
 
 // Running the server
 app.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));
