@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize";
 import { configDotenv } from "dotenv";
 
-configDotenv(); 
+configDotenv();
 
-const sequelize = new Sequelize(process.env.PG_URI, {
-  dialect: 'postgres',
+export const sequelize = new Sequelize(process.env.PG_URI, {
+  dialect: "postgres",
   logging: false,
   pool: {
     max: 5,
@@ -14,14 +14,12 @@ const sequelize = new Sequelize(process.env.PG_URI, {
   },
 });
 
-const connectPostgres = async () => {
+export const connectPostgres = async () => {
   try {
     await sequelize.authenticate();
     console.log("postgres connected successfully!");
-    if(process.env.NODE_ENV === "development") await sequelize.sync();
-  } catch(error) {
+    if (process.env.NODE_ENV === "development") await sequelize.sync();
+  } catch (error) {
     console.log("Unable to connect to postgres: ", error.message);
   }
-}
-
-export default { sequelize, connectPostgres }
+};
