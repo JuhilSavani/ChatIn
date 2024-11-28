@@ -1,4 +1,4 @@
-import { configDotenv } from "dotenv";
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -7,7 +7,7 @@ import { connectPostgres } from "./config/sequelize.config.js"
 import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
 
-configDotenv();
+dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -30,11 +30,11 @@ app.use(cookieParser());
 app.use(passport.initialize()); // Initialize passport 
 
 // Testing Routes
-app.get('/api/test/get', (req, res) => {
-  return res.status(200).send('[GET] 200: OK');
+app.get('/', (req, res) => {
+  return res.status(200).send('<h1> [GET] 200: OK </h1>');
 });
 
-app.post('/api/test/post', (req, res) => {
+app.post('/', (req, res) => {
   return res.status(200).json({ message:'[POST] 200: OK', received: req.body });
 });
 
