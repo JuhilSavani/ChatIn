@@ -4,7 +4,7 @@ import { sequelize } from "../config/sequelize.config.js";
 export const User = sequelize.define(
   "User",
   {
-    id: {
+    id: { // user id
       type: DataTypes.INTEGER,
       autoIncrement: true,
       allowNull: false,
@@ -12,7 +12,7 @@ export const User = sequelize.define(
     },
     name: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
       unique: false,
     },
     email: {
@@ -28,6 +28,6 @@ export const User = sequelize.define(
   },
   {
     tableName: "users",
-    timestamps: false,
+    timestamps: true,
   }
 );
