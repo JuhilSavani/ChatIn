@@ -7,14 +7,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const GMAIL_CLIENT_ID = process.env.GMAIL_CLIENT_ID; 
-const GMAIL_CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET; 
-const GMAIL_REDIRECT_URI = process.env.GMAIL_REDIRECT_URI; 
-const GMAIL_REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN; 
+const JWT_SECRET = process.env.JWT_SECRET;
+const CLIENT_ID = process.env.GMAIL_CLIENT_ID; 
+const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET; 
+const REDIRECT_URI = process.env.GMAIL_REDIRECT_URI; 
+const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN; 
 const SENDER_EMAIL = process.env.SENDER_EMAIL; 
 
-const oAuth2Client = new google.auth.OAuth2(GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REDIRECT_URI);
-oAuth2Client.setCredentials({ refresh_token: GMAIL_REFRESH_TOKEN });
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 export const verifyEmail = async (req, res) => {
   const { email } = req.params;
@@ -115,26 +116,20 @@ export const login = async (req, res) => {
     });
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const refreshToken = jwt.sign(
-        { sub: user.id, name: user.name, email },
-        process.env.REFRESH_TOKEN_SECRET, // Payload
+      const token = jwt.sign(
+        { sub: user.id, name: user.name, email }, // Payload
+        JWT_SECRET, 
         { expiresIn: "7d" }
       );
 
-      const accessToken = jwt.sign(
-        { sub: user.id, name: user.name, email },
-        process.env.ACCESS_TOKEN_SECRET, // Payload
-        { expiresIn: "15m" }
-      );
-
-      res.cookie("chatinToken", refreshToken, {
+      res.cookie("chatinToken", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Strict",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      return res.status(200).json({ name: user.name, email, accessToken });
+      return res.sendStatus(200);
     } else {
       if (!user) return res.status(404).json({ message: "User not found!" });
       return res.status(401).json({ message: "Invalid password!" });
@@ -164,26 +159,20 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const refreshToken = jwt.sign(
+    const token = jwt.sign(
       { sub: newUser.id, name, email }, // Payload
-      process.env.REFRESH_TOKEN_SECRET,
+      JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    const accessToken = jwt.sign(
-      { sub: newUser.id, name, email }, // Payload
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-
-    res.cookie("chatinToken", refreshToken, {
+    res.cookie("chatinToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
 
-    return res.status(201).json({ name, email, accessToken }); // Created 
+    return res.sendStatus(201); // Created 
   } catch (error) {
     console.error(error.stack);
     return res
@@ -201,21 +190,6 @@ export const logout = (req, res) => {
     sameSite: "Strict",
   });
 
-  return res.status(200).json({ message: "Logged out successfully." });
+  return res.sendStatus(200);
 };
 
-export const refresh = (req, res) => {
-  if (!req.cookies?.chatinToken) return res.sendStatus(401); // Unauthorized due to missing refresh token
-  try {
-    const refreshToken = req.cookies.chatinToken;
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET); // Throws error for invalid refresh token
-    const accessToken = jwt.sign(
-      { sub: decoded.sub, name: decoded.name, email: decoded.email },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    return res.status(200).json({ name: decoded.name, email: decoded.email, accessToken });
-  } catch(error) {
-    return res.sendStatus(403); // Forbidden due to invalid refresh token
-  }
-}

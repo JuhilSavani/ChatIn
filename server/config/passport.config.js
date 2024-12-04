@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
 import passport from "passport";
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { User } from "../models/user.models.js";
 
 dotenv.config();
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.ACCESS_TOKEN_SECRET,
+  jwtFromRequest: (req) => req?.cookies?.chatinToken || null,
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 export const configPassport = () => {
