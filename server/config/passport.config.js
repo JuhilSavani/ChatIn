@@ -29,3 +29,5 @@ export const configPassport = () => {
     })
   );
 };
+
+export const authenticateJWT = passport.authenticate('jwt', { session: false });
