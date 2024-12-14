@@ -21,13 +21,6 @@ export const verifyEmail = async (req, res) => {
   const { email } = req.params;
   try {
     
-    const user = await User.findOne({
-      where: { email },
-      attributes: ["id"],
-    });
-
-    if (user) return res.status(409).json({ message: "User already exist!" });
-
     const accessToken = await oAuth2Client.getAccessToken();
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     
@@ -151,6 +144,13 @@ export const register = async (req, res) => {
     });
 
   try {
+    const user = await User.findOne({
+      where: { email },
+      attributes: ["id"],
+    });
+
+    if (user) return res.status(409).json({ message: "User already exist!" });
+    
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = await User.create({
