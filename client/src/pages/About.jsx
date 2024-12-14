@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const About = () => {
   return (
@@ -18,15 +19,19 @@ const About = () => {
           <h2>Behind the Scenes</h2>
           <p>
             <strong>ChatIn'</strong> is built using modern web technologies to
-            deliver a fast and reliable messaging experience. This project
-            uses{" "}
+            deliver a fast and reliable messaging experience. This project uses{" "}
             <strong>Passport.js</strong> for secure authentication,{" "}
-            <strong>React.js</strong> for a modular and minimalist web frontend, and{" "}
-            <strong>WebSocket</strong> to enable real-time communication.
+            <strong>React.js</strong> for a modular and minimalist web frontend,
+            and <strong>WebSocket</strong> to enable real-time communication.
           </p>
         </section>
         <section>
-          <h2>Explore the Project</h2>
+          <h2 className="cta">
+            <Link to="/">Explore the Project</Link>
+            <i class="bx bxs-chevrons-left"></i>
+            <i class="bx bxs-chevrons-left"></i>
+            <i class="bx bxs-chevrons-left"></i>
+          </h2>
           <p>
             Check out <strong>ChatIn'</strong> and see the technology in action.
             Feel free to create an account or jump into a chat room to test out
