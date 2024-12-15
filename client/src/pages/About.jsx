@@ -28,9 +28,9 @@ const About = () => {
         <section>
           <h2 className="cta">
             <Link to="/">Explore the Project</Link>
-            <i class="bx bxs-chevrons-left"></i>
-            <i class="bx bxs-chevrons-left"></i>
-            <i class="bx bxs-chevrons-left"></i>
+            <i className="bx bxs-chevrons-left"></i>
+            <i className="bx bxs-chevrons-left"></i>
+            <i className="bx bxs-chevrons-left"></i>
           </h2>
           <p>
             Check out <strong>ChatIn'</strong> and see the technology in action.
