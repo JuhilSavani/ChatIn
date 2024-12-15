@@ -6,11 +6,11 @@ import passport from "passport";
 import { connectPostgres } from "./config/sequelize.config.js"
 import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
+import { app,server } from "./socket.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
-const app = express();
 
 // Connect the database
 connectPostgres();
@@ -22,7 +22,6 @@ configPassport();
 app.use(cors({ 
   origin: process.env.NODE_ENV === "production" ?  process.env.ALLOWED_ORIGIN : "http://localhost:3000",
   methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
 app.use(express.json());
@@ -41,6 +40,5 @@ app.post('/', (req, res) => {
 // Actual Routes
 app.use("/api/authorize", authRoutes);
 
-
 // Running the server
-app.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));
+server.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));
