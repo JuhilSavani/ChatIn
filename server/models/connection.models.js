@@ -30,8 +30,8 @@ export const Connection = sequelize.define(
       onDelete: 'CASCADE', 
     },
     status: {
-      type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
-      defaultValue: 'pending',
+      type: DataTypes.ENUM('none', 'pending', 'accepted', 'blocked'),
+      defaultValue: 'none',
     },
   },
   {
