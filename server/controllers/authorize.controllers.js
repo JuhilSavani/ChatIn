@@ -103,14 +103,12 @@ export const login = async (req, res) => {
       message: "Please provide both email and password to login.",
     });
   try {
-    const user = await User.findOne({
-      where: { email },
-      attributes: ["id", "name", "password"],
-    });
+    const user = await User.findOne({ where: { email } });
 
+    const payload = { id: user.id, name: user.name, email, createdAt: user.createdAt };
     if (user && bcrypt.compareSync(password, user.password)) {
       const token = jwt.sign(
-        { sub: user.id, name: user.name, email }, // Payload
+        payload, 
         JWT_SECRET, 
         { expiresIn: "7d" }
       );
@@ -122,7 +120,7 @@ export const login = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      return res.sendStatus(200);
+      return res.status(200).json({ user: payload });
     } else {
       if (!user) return res.status(404).json({ message: "User not found!" });
       return res.status(401).json({ message: "Invalid password!" });
@@ -146,7 +144,7 @@ export const register = async (req, res) => {
   try {
     const user = await User.findOne({
       where: { email },
-      attributes: ["id"],
+      attributes: ["id", "createdAt"],
     });
 
     if (user) return res.status(409).json({ message: "User already exist!" });
@@ -159,8 +157,9 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    const payload = { id: newUser.id, name, email, createdAt: newUser.createdAt }
     const token = jwt.sign(
-      { sub: newUser.id, name, email }, // Payload
+      payload, 
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -172,7 +171,7 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
 
-    return res.sendStatus(201); // Created 
+    return res.status(201).json({ user: payload }); // Created 
   } catch (error) {
     console.error(error.stack);
     return res

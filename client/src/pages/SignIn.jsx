@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../utils/apis/axios";
+import useSocket from "../utils/hooks/useSocket";
+import useAuth from "../utils/hooks/useAuth";
 
 const SignIn = () => {
+  const { setIsAuthenticated, setUser } = useAuth();
+  const { connectSocket } = useSocket();
+
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (event) =>{
     event.preventDefault();
     setIsLoading(true);
@@ -13,7 +18,10 @@ const SignIn = () => {
     const userData = Object.fromEntries(formData.entries());
     // todo: add validation layer here...
     try{
-      await axios.post("/authorize/login", userData);
+      const response = await axios.post("/authorize/login", userData);
+      setIsAuthenticated(true);
+      setUser(response?.data?.user);
+      connectSocket();
       navigate("/", { replace: true });
     }catch(error){
       console.error(error.stack);

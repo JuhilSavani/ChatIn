@@ -1,27 +1,25 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import axios from "./apis/axios";
 import Loading from "../components/Loading";
-import AuthContext from "./contexts/AuthContext";
+import useAuth from "./hooks/useAuth";
+import useSocket from "./hooks/useSocket";
 
 const ProtectedRoute = () => {
-  const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
+  const { connectSocket } = useSocket();
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get("/authorize/check");
-
-        if (response.status >= 200 && response.status < 300) {
-          setIsAuthenticated(true); // User is authenticated
-        } else {
-          setIsAuthenticated(false); // User is not authenticated
-          navigate("/sign-in", {replace: true}); // Redirect to login page
-        }
+        const response  = await axios.get("/authorize/check");
+        setIsAuthenticated(true); // User is authenticated
+        setUser(response?.data?.user);
+        connectSocket();
       } catch (error) {
         console.error("Error checking authentication:", error.stack);
-        setIsAuthenticated(false);
+        setIsAuthenticated(false); // User is not authenticated
         navigate("/sign-in", {replace: true});
       }
     };
