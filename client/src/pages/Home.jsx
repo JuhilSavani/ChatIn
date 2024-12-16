@@ -1,22 +1,40 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
+import useSocket from "../utils/hooks/useSocket";
 import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
 
 const Home = () => {
-  const { user } = useAuth();
   const { data, isLoading, isError, error } = fetchContacts();
+
+  const { user } = useAuth();
+  const { socket } = useSocket();
+  
   const dialogRef = useRef(null);
 
+  const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
-  console.log(Boolean(selectedContact));
 
   const { mutate: addContactMutate, isLoading: isAdding } = addContact();
 
   const openDialog = () => dialogRef.current?.showModal();
   const closeDialog = () => dialogRef.current?.close();
+
+  useEffect(() => {
+    if(data && data.length) setContacts(data);
+
+    if (socket) {
+      socket.on("newConnection", (newConnection) => {
+        setContacts((prevContacts) => [...prevContacts, newConnection]);
+      });
+    }
+
+    return () => {
+      if (socket) socket.off("newConnection");
+    };
+  }, [data, socket]);
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -48,9 +66,9 @@ const Home = () => {
             <ul>
               {isLoading && (<li className="sidebar-msg"><p><strong>Loading connections...</strong></p></li>)}
               {isError && (<li className="sidebar-msg"><p><strong>Error: </strong> {error.message}</p></li>)}
-              {!isLoading && !isError && !Boolean(data?.length) && (<li className="sidebar-msg"><p><strong>No contacts yet!</strong></p></li>)}
-              {!isLoading && !isError && Boolean(data?.length) &&
-                data.map((c) => (
+              {!isLoading && !isError && !Boolean(contacts?.length) && (<li className="sidebar-msg"><p><strong>No contacts yet!</strong></p></li>)}
+              {!isLoading && !isError && Boolean(contacts?.length) &&
+                contacts.map((c) => (
                   <li key={c.id} onClick={() => selectContact(c)}>
                     <i className="bx bx-user-circle"></i>
                     <div>
@@ -77,7 +95,7 @@ const Home = () => {
                 />
               </label>
               <div className="modal-actions">
-                <button className="cancel-btn" onClick={closeDialog}>
+                <button type="button" className="cancel-btn" onClick={closeDialog}>
                   Cancel
                 </button>
                 <button
