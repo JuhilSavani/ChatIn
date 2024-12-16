@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { createConnection, getConnections } from "../controllers/connection.controllers.js";
+import { authenticateJWT } from "../config/passport.config.js";
 
 const router = Router();
 
-router.get(`/:userId`, getConnections);
-router.post(`/create`, createConnection);
+router.get(`/:userId`, authenticateJWT, getConnections);
+router.post(`/create`, authenticateJWT, createConnection);
 
 export default router;
