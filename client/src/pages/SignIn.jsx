@@ -34,7 +34,7 @@ const SignIn = () => {
   return (
     <div className="page sign-in">
       <div className="container">
-        <section className="form-section">
+        <section className="form-area">
           <form onSubmit={handleSubmit} noValidate>
             <label htmlFor="email">Email: </label>
             <input
@@ -58,7 +58,7 @@ const SignIn = () => {
             <button type="submit">{isLoading ? "Loading" : "Login"}</button>
           </form>
         </section>
-        <section className="greet-section">
+        <section className="greeting-area">
           <div>
             <span>
               <i className="bx bxs-message-alt-dots"></i>
