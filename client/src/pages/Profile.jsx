@@ -10,8 +10,8 @@ const Profile = () => {
   useEffect(()=>{
     nameRef.current.value = user.name;
     emailRef.current.value = user.email;
-    const isoDate = user.createdAt;
-    const formattedDate = new Intl.DateTimeFormat('en-GB').format(new Date(isoDate));
+    const timeFormatter = new Intl.DateTimeFormat('en-GB');
+    const formattedDate = timeFormatter.format(new Date(user.createdAt));
     dateRef.current.textContent = formattedDate;
   }, [user]);
 
