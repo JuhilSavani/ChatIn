@@ -10,12 +10,17 @@ const BACKEND_URL =
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated) {
-      const socketInstance = io(BACKEND_URL, { withCredentials: true });
+      const socketInstance = io(BACKEND_URL, {
+        withCredentials: true,
+        query: {
+          userId: user.id,
+        },
+      });
       
       socketInstance.on("connect", () => console.log("Socket connected"));
       socketInstance.on("disconnect", () => console.log("Socket disconnected"));
