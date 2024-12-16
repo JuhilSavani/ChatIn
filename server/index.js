@@ -6,6 +6,7 @@ import passport from "passport";
 import { connectPostgres } from "./config/sequelize.config.js"
 import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
+import connectionRoutes from "./routes/connection.routes.js";
 import { app,server } from "./socket.js";
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.post('/', (req, res) => {
 
 // Actual Routes
 app.use("/api/authorize", authRoutes);
+app.use("/api/connections", connectionRoutes);
 
 // Running the server
 server.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));

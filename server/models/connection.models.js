@@ -37,25 +37,16 @@ export const Connection = sequelize.define(
   {
     tableName: "connections",
     timestamps: true,
-    defaultScope: {
-      where: {
-        status: { [DataTypes.Op.ne]: "blocked" }, // Exclude blocked connections by default
-      },
-    },
+    indexes: [
+      {
+        unique: true,
+        fields: ['userId1', 'userId2'],
+        name: 'unique_connection',
+      }
+    ]
   }
 );
 
-// Set up associations
-User.belongsToMany(User, {
-  through: Connection,
-  as: "connections",
-  foreignKey: "userId1",
-  otherKey: "userId2",
-});
-
-// Adding constraints
-Connection.addConstraint("connections", {
-  fields: ["userId1", "userId2"],
-  type: "unique",
-  name: "unique_connection",
-});
+// Associations
+Connection.belongsTo(User, { as: 'user1', foreignKey: 'userId1' });
+Connection.belongsTo(User, { as: 'user2', foreignKey: 'userId2' });
