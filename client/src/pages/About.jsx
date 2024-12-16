@@ -9,8 +9,8 @@ const About = () => {
           <h2>About ChatIn</h2>
           <p>
             <strong>ChatIn'</strong> is a project to experiment with and
-            showcase real-time communication technologies. This platform
-            demonstrates key aspects of web development, including
+            showcase the concept of real-time communication using WebSockets.
+            This platform demonstrates key aspects of web development, including
             authentication, routing, and minimalist design, while integrating
             with WebSocket for instant messaging.
           </p>
@@ -18,11 +18,16 @@ const About = () => {
         <section>
           <h2>Behind the Scenes</h2>
           <p>
-            <strong>ChatIn'</strong> is built using modern web technologies to
-            deliver a fast and reliable messaging experience. This project uses{" "}
-            <strong>Passport.js</strong> for secure authentication,{" "}
-            <strong>React.js</strong> for a modular and minimalist web frontend,
-            and <strong>WebSocket</strong> to enable real-time communication.
+            <strong>ChatIn</strong> is built on-top of modern web technologies
+            to deliver a fast, secure, and reliable messaging experience. The
+            app utilizes <strong>Passport.js</strong> for secure user
+            authentication, ensuring that only authorized users can access their
+            accounts. The app also uses <strong>React Query</strong> for
+            efficient data fetching, caching, and synchronization, making the
+            app faster and more responsive. On the backend,{" "}
+            <strong>WebSocket</strong> provides real-time communication,
+            allowing users to send and receive messages instantly without the
+            need to refresh the page.
           </p>
         </section>
         <section>
@@ -33,10 +38,11 @@ const About = () => {
             <i className="bx bxs-chevrons-left"></i>
           </h2>
           <p>
-            Check out <strong>ChatIn'</strong> and see the technology in action.
-            Feel free to create an account or jump into a chat room to test out
-            the live messaging feature! The goal is to demonstrate a fully
-            functional messaging app in a clean, modular way.
+            Check out <strong>ChatIn'</strong> and see the technology in action!
+            Create an account, add friends by email, and start chatting to test
+            out the live messaging feature. The goal of this project is to
+            provide a fully functional messaging app with a clean, modular
+            structure and an intuitive, minimalist user interface.
           </p>
         </section>
       </div>
