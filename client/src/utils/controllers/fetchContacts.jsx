@@ -5,14 +5,14 @@ import useAuth from "../hooks/useAuth";
 const fetchContacts = () => {
   const { user } = useAuth();
 
-  const getFn = async () => {
-    const response = await axios.get(`/connections/${user.id}`);
-    return response?.data;
+  const fetchFn = async () => {
+    const { data } = await axios.get(`/connections/${user.id}`);
+    return data;
   }
 
   const fetchQuery = useQuery({
     queryKey: ["connections", user?.id],
-    queryFn: getFn,
+    queryFn: fetchFn,
     enabled: Boolean(user?.id),
     staleTime: 1000 * 60 * 30,
     cacheTime: 1000 * 60 * 60,

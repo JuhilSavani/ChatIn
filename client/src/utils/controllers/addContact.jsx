@@ -4,7 +4,7 @@ import axios from "../apis/axios";
 const addContact = () => {
   const queryClient = useQueryClient();
 
-  const addFn = async (data) => await axios.post(`/connections/create`, data);
+  const addFn = async (connectionData) => await axios.post(`/connections/create`, connectionData);
 
   const addMutation = useMutation({
     mutationFn: addFn,
