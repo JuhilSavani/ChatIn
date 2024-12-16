@@ -66,8 +66,8 @@ export const sendMessage = async (req, res) => {
         case "none":
           connection.status = "pending";
           await connection.save();
-          const newConnection = computedConnection(userId2, connection);
-          const socketId = getSocketId(userId2);
+          const newConnection = computedConnection(recieverId, connection);
+          const socketId = getSocketId(recieverId);
           if(socketId) io.to(socketId).emit("newConnection", newConnection);
           break;
         case "pending":
@@ -85,9 +85,7 @@ export const sendMessage = async (req, res) => {
       id: message.id,
       content: message.content,
       timestamp: message.timestamp,
-      sender: {
-        id: message.senderId,
-      }
+      sender: { id: message.senderId }
     };
 
     const socketId = getSocketId(recieverId);
