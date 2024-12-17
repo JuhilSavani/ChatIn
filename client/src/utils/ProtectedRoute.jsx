@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { toast } from 'react-toastify';
 import { useNavigate, Outlet } from "react-router-dom";
 import axios from "./apis/axios";
 import Loading from "../components/Loading";

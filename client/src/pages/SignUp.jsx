@@ -32,18 +32,18 @@ const SignUp = () => {
 
     try {
       await axios.post('/verify/account', { email: userData.email });
-      if(import.meta.env.VITE_NODE_ENV === "production"){
-        const { data } =  await axios.get(`/verify/${userData.email}`);
-        setResource({userData, verificationCode: data?.verificationCode });
-        toast.success("Verification code sent to your email.");
-        navigate(`/verify/${userData.email}`);
-      }else{
+      if(import.meta.env.VITE_NODE_ENV === "development"){
         const { data } = await axios.post('/authorize/register', userData);
         setIsAuthenticated(true);
         setUser(data?.user);
         connectSocket();
         toast.success("Registration successful!");
         navigate("/", { replace: true });
+      }else{
+        const { data } =  await axios.get(`/verify/${userData.email}`);
+        setResource({userData, verificationCode: data?.verificationCode });
+        toast.success("Verification code sent to your email.");
+        navigate(`/verify/${userData.email}`);
       }
     } catch (error) {
       console.error(error.stack);
