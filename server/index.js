@@ -60,4 +60,4 @@ if(isProduction){
 }
 
 // Running the server
-server.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));
+server.listen(PORT, () => process.stdout.write(`[SERVER] ${isProduction ? process.env.APP_ORIGIN : ("http://localhost:" + PORT)}\n`));
