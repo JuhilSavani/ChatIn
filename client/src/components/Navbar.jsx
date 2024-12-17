@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-toastify';
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import axios from "../utils/apis/axios";
 import useAuth from "../utils/hooks/useAuth";
@@ -14,10 +15,11 @@ const Navbar = () => {
     try {
       await axios.post('/authorize/logout');
       setIsAuthenticated(false);
+      toast.success("Logged out successfuly!");
       navigate("/sign-in", {replace: true});
     } catch (error) {
-      console.error(error.stack);
-      alert(error?.response?.data.message || error?.message)
+      console.error(error?.response?.data.stack || error.stack);
+      toast.error(error?.response?.data.message || error.message);
     } finally {
       setIsLoading(false);
     }

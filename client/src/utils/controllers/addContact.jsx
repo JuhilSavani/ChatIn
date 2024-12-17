@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from 'react-toastify';
 import axios from "../apis/axios";
 
 const addContact = () => {
@@ -10,11 +11,11 @@ const addContact = () => {
     mutationFn: addFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["connections"]);
-      console.log("contact added successfully!");
+      toast.success("contact added successfully!");
     },
     onError: (err) => {
-      console.log(err?.response?.data?.stack || err.stack);
-      alert(err?.response?.data?.message || err.message);
+      console.error(err?.response?.data?.stack || err.stack);
+      toast.error(err?.response?.data?.message || err.message);
     },
   });
 

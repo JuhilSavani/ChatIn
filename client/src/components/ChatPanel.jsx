@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from 'react-toastify';
 import useAuth from "../utils/hooks/useAuth";
 import useSocket from "../utils/hooks/useSocket";
 import fetchMessages from "../utils/controllers/fetchMessages";
@@ -49,8 +50,8 @@ const ChatPanel = ({ contact }) => {
       });
       messageRef.current.value = "";
     } catch (error) {
-      alert(error?.response?.data.message || error.message);
       console.error(error?.response?.data.stack || error.stack);
+      toast.error(error?.response?.data.message || error.message);
     }
   };
 

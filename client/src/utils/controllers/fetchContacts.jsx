@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { toast } from 'react-toastify';
 import axios from "../apis/axios";
 import useAuth from "../hooks/useAuth";
 
@@ -18,7 +19,7 @@ const fetchContacts = () => {
     cacheTime: 1000 * 60 * 60,
     onError: (err) => {
       console.error(err?.response?.data?.stack || err.stack);
-      alert(err?.response?.data?.message || err.message);
+      toast.error(err?.response?.data?.message || err.message);
     },
   });
 

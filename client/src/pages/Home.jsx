@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { toast } from 'react-toastify';
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
 import useSocket from "../utils/hooks/useSocket";
@@ -44,8 +45,8 @@ const Home = () => {
         throw new Error("Please provide a valid email other than yours!");
       addContactMutate({ userId: user.id, email });
     } catch (error) {
-      alert(error?.response?.data.message || error.message);
       console.error(error?.response?.data.stack || error.stack);
+      toast.error(error?.response?.data.message || error.message);
     }
     closeDialog();
   };
