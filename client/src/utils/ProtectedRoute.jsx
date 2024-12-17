@@ -13,12 +13,13 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const response  = await axios.get("/authorize/check");
+        const response  = await axios.get("/authorize/status");
         setIsAuthenticated(true); // User is authenticated
         setUser(response?.data?.user);
         connectSocket();
       } catch (error) {
-        console.error("Error checking authentication:", error.stack);
+        console.error(error?.response?.data.stack ||error.stack);
+        toast.error("Please login to continue!");
         setIsAuthenticated(false); // User is not authenticated
         navigate("/sign-in", {replace: true});
       }
