@@ -6,13 +6,13 @@ const About = () => {
     <div className="page about">
       <div className="container">
         <section>
-          <h2>About ChatIn</h2>
+          <h2>About ChatIn'</h2>
           <p>
-            <strong>ChatIn'</strong> is a project to experiment with and
-            showcase the concept of real-time communication using WebSockets.
-            This platform demonstrates key aspects of web development, including
-            authentication, routing, and minimalist design, while integrating
-            with WebSocket for instant messaging.
+            <strong>ChatIn'</strong> is a project designed to explore and
+            showcase how <strong>real-time communication</strong> happens using
+            WebSockets. This project highlights key aspects of web development, 
+            including authentication, routing, and minimalist design, while 
+            integrating with WebSocket for <strong>instant messaging.</strong>
           </p>
         </section>
         <section>
@@ -20,14 +20,13 @@ const About = () => {
           <p>
             <strong>ChatIn</strong> is built on-top of modern web technologies
             to deliver a fast, secure, and reliable messaging experience. The
-            app utilizes <strong>Passport.js</strong> for secure user
-            authentication, ensuring that only authorized users can access their
-            accounts. The app also uses <strong>React Query</strong> for
-            efficient data fetching, caching, and synchronization, making the
-            app faster and more responsive. On the backend,{" "}
-            <strong>WebSocket</strong> provides real-time communication,
-            allowing users to send and receive messages instantly without the
-            need to refresh the page.
+            app utilizes <strong>Passport.js</strong> for secure user authentication, 
+            ensuring that only authorized users can access their accounts. It also 
+            uses <strong>React Query</strong> for efficient data fetching, caching, 
+            and synchronization, making the app faster and more responsive. On the 
+            backend, <strong>WebSocket</strong> provides real-time communication, 
+            allowing users to send and receive messages instantly without the need 
+            to refresh the page.
           </p>
         </section>
         <section>
