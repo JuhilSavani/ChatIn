@@ -3,29 +3,41 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "../utils/apis/axios";
 import useSocket from "../utils/hooks/useSocket";
 import useAuth from "../utils/hooks/useAuth";
+import useValidate from "../utils/hooks/useValidate"
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
   const { setIsAuthenticated, setUser } = useAuth();
   const { connectSocket } = useSocket();
+  const validate = useValidate();
 
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleSubmit = async (event) =>{
     event.preventDefault();
     setIsLoading(true);
     const formData = new FormData(event.target);
     const userData = Object.fromEntries(formData.entries());
-    // todo: add validation layer here...
+
+    // Validate the data
+    const validationError = validate(userData, { type: "login" });
+    if (validationError) {
+      toast.error(validationError);
+      setIsLoading(false);
+      return; 
+    }
+
     try{
       const response = await axios.post("/authorize/login", userData);
       setIsAuthenticated(true);
       setUser(response?.data?.user);
       connectSocket();
+      toast.success("Great to see you again!");
       navigate("/", { replace: true });
     }catch(error){
       console.error(error.stack);
-      alert(error?.response?.data.message || error?.message);
+      toast.error(error?.response?.data.message || error?.message);
     }finally{
       setIsLoading(false);
     }

@@ -3,10 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "../utils/apis/axios";
 import useSocket from "../utils/hooks/useSocket";
 import useAuth from "../utils/hooks/useAuth";
+import useResource from "../utils/hooks/useResource";
+import useValidate from "../utils/hooks/useValidate"
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
   const { setIsAuthenticated, setUser } = useAuth();
   const { connectSocket } = useSocket();
+  const { setResource } = useResource()
+  const validate = useValidate();
   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,16 +21,33 @@ const SignUp = () => {
     setIsLoading(true);
     const formData = new FormData(event.target);
     const userData = Object.fromEntries(formData.entries());
-    // todo: add validation layer here...
+
+    // Validate the data
+    const validationError = validate(userData, { type: "register" });
+    if (validationError) {
+      toast.error(validationError);
+      setIsLoading(false);
+      return; 
+    }
+
     try {
-      const response = await axios.post('/authorize/register', userData);
-      setIsAuthenticated(true);
-      setUser(response?.data?.user);
-      connectSocket();
-      navigate("/", { replace: true });
+      await axios.post('/verify/account', { email: userData.email });
+      if(import.meta.env.VITE_NODE_ENV === "production"){
+        const { data } =  await axios.get(`/verify/${userData.email}`);
+        setResource({userData, verificationCode: data?.verificationCode });
+        toast.success("Verification code sent to your email.");
+        navigate(`/verify/${userData.email}`);
+      }else{
+        const { data } = await axios.post('/authorize/register', userData);
+        setIsAuthenticated(true);
+        setUser(data?.user);
+        connectSocket();
+        toast.success("Registration successful!");
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       console.error(error.stack);
-      alert(error?.response?.data.message || error?.message);
+      toast.error(error?.response?.data.message || error?.message);
     } finally {
       setIsLoading(false);
     }
