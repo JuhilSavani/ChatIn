@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const sequelize = new Sequelize(process.env.PG_URI, {
+const PG_URI = process.env.NODE_ENV === "production" ? process.env.PG_URI_PROD : process.env.PG_URI_DEV;
+
+export const sequelize = new Sequelize(PG_URI, {
   dialect: "postgres",
   logging: false,
   pool: {
