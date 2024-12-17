@@ -8,7 +8,8 @@ import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
 import connectionRoutes from "./routes/connection.routes.js";
 import messageRoutes from "./routes/message.routes.js";
-import { app,server } from "./socket.js";
+import verificationRoutes from "./routes/verification.routes.js"
+import { app, server } from "./socket.js";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.post('/', (req, res) => {
 app.use("/api/authorize", authRoutes);
 app.use("/api/connections", connectionRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/verify", verificationRoutes);
 
 // Running the server
 server.listen(PORT, () => process.stdout.write(`[SERVER] http://localhost:${PORT}\n`));
