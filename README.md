@@ -1,6 +1,6 @@
 # ChatIn
 
-**ChatIn** is a project to experiment with and showcase the concept of real-time communication using WebSockets.
+A project designed to explore and demonstrate the implementation of real-time communication using WebSockets.
 
 ---
 
@@ -11,7 +11,6 @@ Before you begin, ensure that you have the following installed on your machine:
 - **Node.js** (v14.x or higher): Required to run the server and client applications.
 - **npm** (v6.x or higher): Package managers to install dependencies.
 - **PostgreSQL**: The database used for storing user information. Ensure you have it installed and set up locally or have access to a remote PostgreSQL instance.
-
 
 ## Installation
 
@@ -40,10 +39,10 @@ To set up ChatIn locally, follow these steps:
     npm install 
     ```
 
-5. Database setup:
+5. Database setup:<br/>
 This project uses PostgreSQL as its database management system. Follow the steps below to set up the database.
     - Open the terminal on your system.
-    - Run the following Command to create a database
+    - Run the following Command to create a database.
       ```bash
       psql -U postgres -c "CREATE DATABASE chatin_db;"
       ```
@@ -55,7 +54,7 @@ This project uses PostgreSQL as its database management system. Follow the steps
     npm run dev
     ```
 
-7. In another terminal, start the frontend:
+7. Start the frontend(using new terminal window):
     ```bash
     cd client
     npm run dev
