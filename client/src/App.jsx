@@ -13,8 +13,12 @@ import Profile from "./pages/Profile";
 import Navbar from "./components/Navbar";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import EmailVerify from "./pages/EmailVerify";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import useAuth from "./utils/hooks/useAuth";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Define a layout component
 const Layout = () => {
@@ -28,6 +32,18 @@ const Layout = () => {
     <>
       {isAuthenticated && showNavbar && <Navbar />}
       <Outlet />
+      <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
     </>
   );
 };
@@ -43,6 +59,10 @@ const routes = createRoutesFromElements(
 
     <Route path="sign-in" element={<SignIn />} />
     <Route path="sign-up" element={<SignUp />} />
+    <Route path="verify/:email" element={<EmailVerify />} />
+
+     {/* Catch all */}
+     <Route path="*" element={<NotFound />} />
   </Route>
 );
 
