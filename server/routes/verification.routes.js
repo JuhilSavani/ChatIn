@@ -1,7 +1,7 @@
-import express from "express";
+import { Router } from "express";
 import { verifyEmail, verifyAccount } from "../controllers/verification.controllers.js";
 
-const router = express.Router();
+const router = Router();
 
 router.get("/:email", verifyEmail);
 router.post("/account", verifyAccount);

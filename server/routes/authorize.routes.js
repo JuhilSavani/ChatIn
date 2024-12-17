@@ -1,8 +1,8 @@
-import express from "express";
+import { Router } from "express";
 import { login, register, logout } from "../controllers/authorize.controllers.js";
 import { authenticateJWT } from "../config/passport.config.js";
 
-const router = express.Router();
+const router = Router();
 
 router.post("/login", login);
 router.post("/register", register);

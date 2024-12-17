@@ -9,7 +9,7 @@ const io = new Server(server, {
   cors: {
     origin:
       process.env.NODE_ENV === "production"
-        ? process.env.ALLOWED_ORIGIN
+        ? process.env.APP_ORIGIN
         : "http://localhost:3000",
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
     credentials: true,
@@ -19,15 +19,9 @@ const io = new Server(server, {
 const socketMap = {};
 
 io.on("connection", (socket) => {
-  console.log("User has been connected: ", socket.id);
-
   const userId = socket.handshake.query.userId;
   if (userId) socketMap[userId] = socket.id;
-
-  socket.on("disconnect", () => {
-    console.log("User has been disconnected: ", socket.id);
-    delete socketMap[userId];
-  });
+  socket.on("disconnect", () => delete socketMap[userId]);
 });
 
 const getSocketId = (userId) => socketMap[userId];
