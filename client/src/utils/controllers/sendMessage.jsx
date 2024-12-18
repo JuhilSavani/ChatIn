@@ -9,10 +9,7 @@ const sendMessage = () => {
 
   return useMutation({
     mutationFn: sendFn,
-    onSuccess: (newMessage, { connectionId }) => {
-      queryClient.invalidateQueries(["messages", connectionId]);
-      console.log("Message sent successfully! ", newMessage);
-    },
+    onSuccess: (_, { connectionId }) => queryClient.invalidateQueries(["messages", connectionId]),
     onError: (err) => {
       console.error(err?.response?.data?.stack || err.stack);
       toast.error(err?.response?.data?.message || err.message);
