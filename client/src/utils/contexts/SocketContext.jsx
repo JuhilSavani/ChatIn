@@ -22,8 +22,8 @@ export const SocketProvider = ({ children }) => {
         },
       });
       
-      socketInstance.on("connect", () => console.log("Socket connected"));
-      socketInstance.on("disconnect", () => console.log("Socket disconnected"));
+      // socketInstance.on("connect", () => console.log("Socket connected"));
+      // socketInstance.on("disconnect", () => console.log("Socket disconnected"));
 
       setSocket(socketInstance);
 
