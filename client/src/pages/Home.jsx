@@ -29,7 +29,6 @@ const Home = () => {
 
     if (socket) {
       socket.on("newConnection", (newConnection) => {
-        alert(newConnection);
         setContacts((prevContacts) => [...prevContacts, newConnection]);
       });
     }
