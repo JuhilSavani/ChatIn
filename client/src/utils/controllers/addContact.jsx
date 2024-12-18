@@ -7,19 +7,17 @@ const addContact = () => {
 
   const addFn = async (connectionData) => await axios.post(`/connections/create`, connectionData);
 
-  const addMutation = useMutation({
+  return useMutation({
     mutationFn: addFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["connections"]);
-      toast.success("contact added successfully!");
+      toast.success("Contact added successfully!");
     },
     onError: (err) => {
       console.error(err?.response?.data?.stack || err.stack);
       toast.error(err?.response?.data?.message || err.message);
     },
   });
-
-  return addMutation;
 };
 
 export default addContact;
