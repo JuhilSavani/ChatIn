@@ -71,7 +71,8 @@ export const sendMessage = async (req, res) => {
           if(socketId) io.to(socketId).emit("newConnection", newConnection);
           break;
         case "pending":
-          if (connection.userId2 == senderId){ 
+          if (connection.user2.id == senderId){ 
+            console.log("\nok\n");
             connection.status = "accepted";
             await connection.save();
           }
