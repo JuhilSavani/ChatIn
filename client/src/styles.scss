@@ -898,3 +898,28 @@ header nav {
     transform: rotate(360deg);
   }
 }
+
+footer{
+  position: fixed;
+  bottom: 0;
+  width: 95vw;
+  left: 50%;
+  transform: translate(-50%, 70%);
+  height: 60px;
+  border-radius: 6px 6px 0 0;
+  background-color: $primary-white;
+  border: 2px solid rgba(16, 16, 16, 0.75);
+  border-bottom: none;
+  border-top: 5px solid rgba(16, 16, 16, 0.75);
+  display: grid;
+  place-items: center;
+  transition: 0.3s ease;
+  
+  span{
+    font-weight: 600;
+    border-bottom: 2px dashed $primary-black;
+  }
+  &:hover{
+    transform: translate(-50%, 0%);
+  }
+}

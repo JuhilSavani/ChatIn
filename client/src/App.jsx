@@ -44,6 +44,9 @@ const Layout = () => {
           pauseOnHover
           theme="colored"
         />
+        <footer>
+          <span>Built with ❤, ☕️ and lots of 🍪s!</span>
+        </footer>
     </>
   );
 };
