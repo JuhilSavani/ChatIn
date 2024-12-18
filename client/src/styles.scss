@@ -192,11 +192,15 @@ header nav {
     display: inline-flex;
     align-items: center;
     font-weight: 600;
+    height: 45px;
     &:hover{
       box-shadow: 0 0 0 2px rgba(16, 16, 16, 0.75);
     }
   }
 
+  .create-btn i{
+    font-size: 1.25 * $font-lg;
+  }
   .cancel-btn {
     background-color: $primary-white;
   }
@@ -640,7 +644,7 @@ header nav {
       }
     }
 
-    i {
+    span{
       display: inline-flex;
       justify-content: center;
       font-size: 1.25 * $font-lg;
@@ -878,5 +882,19 @@ header nav {
     &:hover{
       box-shadow: 0 0 0 2px rgba(16, 16, 16, 0.75);
     }
+  }
+}
+
+.bx-loader{
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
