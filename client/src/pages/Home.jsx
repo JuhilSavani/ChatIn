@@ -17,8 +17,9 @@ const Home = () => {
 
   const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
+  const [isAdding, setIsAdding] = useState(false);
 
-  const { mutate: addContactMutate, isLoading: isAdding } = addContact();
+  const { mutate: addContactMutate } = addContact();
 
   const openDialog = () => dialogRef.current?.showModal();
   const closeDialog = () => dialogRef.current?.close();
@@ -28,6 +29,7 @@ const Home = () => {
 
     if (socket) {
       socket.on("newConnection", (newConnection) => {
+        alert(newConnection);
         setContacts((prevContacts) => [...prevContacts, newConnection]);
       });
     }
@@ -40,15 +42,25 @@ const Home = () => {
   const handleCreate = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    try {
-      if (email == user.email)
-        throw new Error("Please provide a valid email other than yours!");
-      addContactMutate({ userId: user.id, email });
-    } catch (error) {
-      console.error(error?.response?.data.stack || error.stack);
-      toast.error(error?.response?.data.message || error.message);
-    }
-    closeDialog();
+
+    if (email == user.email) {
+      toast.error("Please provide a valid email other than yours!");
+      closeDialog();
+      return;
+    };
+
+    setIsAdding(true);
+
+    addContactMutate({ userId: user.id, email }, {
+      onSuccess: () => {
+        setIsAdding(false);
+        closeDialog();
+      },
+      onError: () => {
+        setIsAdding(false);
+        closeDialog();
+      },
+    });
   };
 
   return (
@@ -104,7 +116,7 @@ const Home = () => {
                   className="create-btn"
                   disabled={isAdding}
                 >
-                  {isAdding ? "..." : "Add"}
+                  {isAdding ? <i className="bx bx-loader"></i> : "Add"}
                 </button>
               </div>
             </form>

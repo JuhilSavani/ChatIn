@@ -13,6 +13,7 @@ const ChatPanel = ({ contact }) => {
   const { socket } = useSocket();
   
   const [messages, setMessages] = useState([]);
+  const [isSending, setIsSending] = useState(false);
   const messageRef = useRef(null);
   
   const { data, isLoading, isError, error } = fetchMessages(connectionId);
@@ -40,19 +41,24 @@ const ChatPanel = ({ contact }) => {
 
   const handleSendMessage = () => {
     const messageContent = messageRef.current.value.trim();
-    if (!messageContent) return;
-    try {
-      sendMsg({
-        connectionId,
-        senderId: user.id,
-        recieverId: connectedUser.id,
-        content: messageContent,
-      });
-      messageRef.current.value = "";
-    } catch (error) {
-      console.error(error?.response?.data.stack || error.stack);
-      toast.error(error?.response?.data.message || error.message);
+    if (!messageContent || isSending) return;
+    const data = {
+      connectionId,
+      senderId: user.id,
+      recieverId: connectedUser.id,
+      content: messageContent,
     }
+    setIsSending(true);
+    sendMsg(data, {
+      onSuccess: () => {
+        setIsSending(false);
+        messageRef.current.value = "";
+      },
+      onError: () => {
+        setIsSending(false);
+        messageRef.current.value = "";
+      }
+    });
   };
 
   return (
@@ -81,7 +87,7 @@ const ChatPanel = ({ contact }) => {
       <section className="message-input">
         <input type="text" placeholder="Type a message..." ref={messageRef}/>
         <span onClick={handleSendMessage}>
-          <i className="bx bxs-send"></i>
+          { isSending ? <i className='bx bx-loader'></i> : <i className="bx bxs-send"></i> }
         </span>
       </section>
     </div>
