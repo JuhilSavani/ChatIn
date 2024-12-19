@@ -75,7 +75,7 @@ export const createConnection = async (req, res) => {
     const user2 = await User.findOne({ where: { email } });
 
     if (!user1 || !user2)
-      return res.status(404).json({ message: "One or both users not found." });
+      return res.status(404).json({ message: "User not found!" });
 
     const existingConnection = await Connection.findOne({
       where: {
@@ -93,11 +93,11 @@ export const createConnection = async (req, res) => {
 
     if (existingConnection) {
       if (existingConnection.status == "blocked")
-        return res.status(400).json({ message: "This connection is blocked." });
+        return res.status(400).json({ message: "You are blocked by this contact." });
       else if (existingConnection.status == "accepted")
-        return res.status(400).json({ message: "This connection already exists." });
+        return res.status(400).json({ message: "Already exists." });
       else if (existingConnection.user1.id == userId)
-        return res.status(400).json({ message: "This connection already exists." });
+        return res.status(400).json({ message: "Already exists." });
       else {
         existingConnection.status = "accepted";
         await existingConnection.save();
@@ -145,14 +145,14 @@ export const updateConnectionStatus = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Connection status updated successfully." });
+      .json({ message: "Status updated successfully." });
   } catch (error) {
     console.error(
       "[connection.controllers.js] Error updating connection status: ",
       error.stack
     );
     return res.status(500).json({
-      message: "An error occurred while updating the connection status.",
+      message: "An error occurred while updating the status.",
       error: error.message,
     });
   }
