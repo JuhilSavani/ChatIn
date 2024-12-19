@@ -1,21 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from 'react-toastify';
 import useAuth from "../utils/hooks/useAuth";
 import useSocket from "../utils/hooks/useSocket";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
 
 const ChatPanel = ({ contact }) => {
-
   const { connectionId, connectedUser } = contact;
 
   const { user } = useAuth();
   const { socket } = useSocket();
-  
+
   const [messages, setMessages] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const messageRef = useRef(null);
-  
+  const chatAreaRef = useRef(null);  
+
   const { data, isLoading, isError, error } = fetchMessages(connectionId);
   const { mutate: sendMsg } = sendMessage();
 
@@ -25,7 +24,14 @@ const ChatPanel = ({ contact }) => {
     hour12: true,
   });
 
-  useEffect(() =>{
+  // Function to scroll to the bottom of the chat area
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
     if (data && data.length) setMessages(data);
 
     if (socket) {
@@ -35,9 +41,13 @@ const ChatPanel = ({ contact }) => {
     }
 
     return () => {
-      if (socket) socket.off("newMessage"); 
+      if (socket) socket.off("newMessage");
     };
   }, [data, socket]);
+
+  useEffect(() => {
+    scrollToBottom();  // Scroll to bottom whenever messages change
+  }, [messages]);
 
   const handleSendMessage = () => {
     const messageContent = messageRef.current.value.trim();
@@ -47,7 +57,7 @@ const ChatPanel = ({ contact }) => {
       senderId: user.id,
       recieverId: connectedUser.id,
       content: messageContent,
-    }
+    };
     setIsSending(true);
     sendMsg(data, {
       onSuccess: () => {
@@ -57,7 +67,7 @@ const ChatPanel = ({ contact }) => {
       onError: () => {
         setIsSending(false);
         messageRef.current.value = "";
-      }
+      },
     });
   };
 
@@ -70,7 +80,7 @@ const ChatPanel = ({ contact }) => {
           <span>{connectedUser.email}</span>
         </div>
       </section>
-      <section className="chat-area">
+      <section className="chat-area" ref={chatAreaRef}>
         {isLoading && <p><strong>Loading messages...</strong></p>}
         {isError && <p><strong>Error: </strong>{error.message}</p>}
         {!isLoading && !isError && !Boolean(messages?.length) && <p><strong>No messages yet!</strong></p>}
@@ -85,9 +95,9 @@ const ChatPanel = ({ contact }) => {
         ))}
       </section>
       <section className="message-input">
-        <input type="text" placeholder="Type a message..." ref={messageRef}/>
+        <input type="text" placeholder="Type a message..." ref={messageRef} />
         <span onClick={handleSendMessage}>
-          { isSending ? <i className='bx bx-loader'></i> : <i className="bx bxs-send"></i> }
+          {isSending ? <i className='bx bx-loader'></i> : <i className="bx bxs-send"></i>}
         </span>
       </section>
     </div>
