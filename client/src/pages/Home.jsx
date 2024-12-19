@@ -18,6 +18,7 @@ const Home = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
   const [isAdding, setIsAdding] = useState(false);
+  const [search, setSearch] = useState(""); 
 
   const { mutate: addContactMutate } = addContact();
 
@@ -25,7 +26,7 @@ const Home = () => {
   const closeDialog = () => dialogRef.current?.close();
 
   useEffect(() => {
-    if(data && data.length) setContacts(data);
+    if (data && data.length) setContacts(data);
 
     if (socket) {
       socket.on("newConnection", (newConnection) => {
@@ -38,15 +39,15 @@ const Home = () => {
     };
   }, [data, socket]);
 
-  const handleCreate = (e) => {
+  const handleAdd = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
 
-    if (email == user.email) {
+    if (email === user.email) {
       toast.error("Please provide a valid email other than yours!");
       closeDialog();
       return;
-    };
+    }
 
     setIsAdding(true);
 
@@ -62,11 +63,23 @@ const Home = () => {
     });
   };
 
+  // Filter contacts based on the search 
+  const filteredContacts = contacts.filter((contact) =>
+    contact.connectedUser.name.toLowerCase().includes(search.toLowerCase()) ||
+    contact.connectedUser.email.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="page home">
       <div className="container">
         <section className="sidebar">
           <div className="sidebar-header">
+            <div className="search">
+              <i className="bx bx-search"></i>
+              <input type="text" placeholder="Search" value={search}
+                onChange={(e) => setSearch(e.target.value)} 
+              />
+            </div>
             <span>
               <i className="bx bxs-contact"></i>Contacts
             </span>
@@ -76,11 +89,23 @@ const Home = () => {
           </div>
           <div className="contacts">
             <ul>
-              {isLoading && (<li className="sidebar-msg"><p><strong>Loading connections...</strong></p></li>)}
-              {isError && (<li className="sidebar-msg"><p><strong>Error: </strong> {error.message}</p></li>)}
-              {!isLoading && !isError && !Boolean(contacts?.length) && (<li className="sidebar-msg"><p><strong>No contacts yet!</strong></p></li>)}
-              {!isLoading && !isError && Boolean(contacts?.length) &&
-                contacts.map((c) => (
+              {isLoading && (
+                <li className="sidebar-msg">
+                  <p><strong>Loading connections...</strong></p>
+                </li>
+              )}
+              {isError && (
+                <li className="sidebar-msg">
+                  <p><strong>Error: </strong>{error.message}</p>
+                </li>
+              )}
+              {!isLoading && !isError && !Boolean(filteredContacts?.length) && (
+                <li className="sidebar-msg">
+                  <p><strong>No contacts yet!</strong></p>
+                </li>
+              )}
+              {!isLoading && !isError && Boolean(filteredContacts?.length) &&
+                filteredContacts.map((c) => (
                   <li key={c.id} onClick={() => selectContact(c)}>
                     <i className="bx bx-user-circle"></i>
                     <div>
@@ -96,7 +121,7 @@ const Home = () => {
         <dialog ref={dialogRef} className="modal">
           <div className="modal-content">
             <h3>Add Contact</h3>
-            <form onSubmit={handleCreate}>
+            <form onSubmit={handleAdd}>
               <label>
                 Email:
                 <input
