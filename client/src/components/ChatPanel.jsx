@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../utils/hooks/useAuth";
 import useSocket from "../utils/hooks/useSocket";
 import fetchMessages from "../utils/controllers/fetchMessages";
@@ -7,6 +8,8 @@ import sendMessage from "../utils/controllers/sendMessage";
 const ChatPanel = ({ contact }) => {
   const { connectionId, connectedUser } = contact;
 
+  const queryClient = useQueryClient();
+  
   const { user } = useAuth();
   const { socket } = useSocket();
 
@@ -37,13 +40,16 @@ const ChatPanel = ({ contact }) => {
     if (socket) {
       socket.on("newMessage", (newMessage) => {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        queryClient.setQueryData(["messages", connectionId], (oldMessages = []) => {
+          return [...oldMessages, newMessage];
+        });
       });
     }
 
     return () => {
       if (socket) socket.off("newMessage");
     };
-  }, [data, socket]);
+  }, [data, socket, queryClient, connectionId]);
 
   useEffect(() => {
     scrollToBottom();  // Scroll to bottom whenever messages change
