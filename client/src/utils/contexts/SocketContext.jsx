@@ -3,9 +3,7 @@ import { io } from "socket.io-client";
 import useAuth from "../hooks/useAuth";
 
 const BACKEND_URL =
-  process.env.NODE_ENV == "production"
-    ? process.env.BACKEND_URL
-    : "http://localhost:4000";
+  import.meta.env.VITE_NODE_ENV === "production" ? "/" : "http://localhost:4000";
 
 const SocketContext = createContext();
 
@@ -17,9 +15,7 @@ export const SocketProvider = ({ children }) => {
     if (isAuthenticated) {
       const socketInstance = io(BACKEND_URL, {
         withCredentials: true,
-        query: {
-          userId: user.id,
-        },
+        query: { userId: user.id },
       });
       
       // socketInstance.on("connect", () => console.log("Socket connected"));
