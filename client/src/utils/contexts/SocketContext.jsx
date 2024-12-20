@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import useAuth from "../hooks/useAuth";
 
 const BACKEND_URL =
-  import.meta.env.VITE_NODE_ENV === "production" ? "/" : "http://localhost:4000";
+  import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:4000" : "/";
 
 const SocketContext = createContext();
 
