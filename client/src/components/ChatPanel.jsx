@@ -4,6 +4,7 @@ import useAuth from "../utils/hooks/useAuth";
 import useSocket from "../utils/hooks/useSocket";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
+import { toast } from "react-toastify";
 
 const ChatPanel = ({ contact }) => {
   const { connectionId, connectedUser } = contact;
@@ -27,13 +28,6 @@ const ChatPanel = ({ contact }) => {
     hour12: true,
   });
 
-  // Function to scroll to the bottom of the chat area
-  const scrollToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
-    }
-  };
-
   useEffect(() => {
     if (data && data.length) setMessages(data);
 
@@ -43,6 +37,7 @@ const ChatPanel = ({ contact }) => {
         queryClient.setQueryData(["messages", connectionId], (oldMessages = []) => {
           return [...oldMessages, newMessage];
         });
+        toast.success(`New message from ${newMessage.sender.email}`);
       });
     }
 
@@ -51,8 +46,10 @@ const ChatPanel = ({ contact }) => {
     };
   }, [data, socket, queryClient, connectionId]);
 
+  // Scroll down to the bottom on message state update
   useEffect(() => {
-    scrollToBottom();  // Scroll to bottom whenever messages change
+    chatAreaRef.current 
+    && (chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight);
   }, [messages]);
 
   const handleSendMessage = () => {
@@ -75,6 +72,13 @@ const ChatPanel = ({ contact }) => {
         messageRef.current.value = "";
       },
     });
+  };
+
+  const handleKeyDown = (e) => {
+    if(e.key === "Enter"){
+      e.preventDefault();  
+      handleSendMessage();
+    }
   };
 
   return (
@@ -101,7 +105,7 @@ const ChatPanel = ({ contact }) => {
         ))}
       </section>
       <section className="message-input">
-        <input type="text" placeholder="Type a message..." ref={messageRef} />
+        <input type="text" placeholder="Type a message..." ref={messageRef} onKeyDown={handleKeyDown} />
         <span onClick={handleSendMessage}>
           {isSending ? <i className='bx bx-loader'></i> : <i className="bx bxs-send"></i>}
         </span>
