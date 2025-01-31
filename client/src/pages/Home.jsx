@@ -30,7 +30,13 @@ const Home = () => {
 
     if (socket) {
       socket.on("newConnection", (newConnection) => {
+        const { connectedUser } = newConnection;
         setContacts((prevContacts) => [...prevContacts, newConnection]);
+        addContactMutate({ userId: connectedUser.id, email: connectedUser.email }, {
+          onSuccess: () => {
+            // TODO: deliver a meaningful toast message 
+          }
+        });
       });
     }
 
@@ -55,10 +61,13 @@ const Home = () => {
       onSuccess: () => {
         setIsAdding(false);
         closeDialog();
+        toast.success(`${email} added successfully!`);
       },
-      onError: () => {
+      onError: (err) => {
         setIsAdding(false);
         closeDialog();
+        console.error(err?.response?.data?.stack || err.stack);
+        toast.error(`An error occurred while adding ${email}!`);
       },
     });
   };
