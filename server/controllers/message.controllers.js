@@ -72,7 +72,6 @@ export const sendMessage = async (req, res) => {
           break;
         case "pending":
           if (connection.user2.id == senderId){ 
-            console.log("\nok\n");
             connection.status = "accepted";
             await connection.save();
           }
@@ -86,7 +85,11 @@ export const sendMessage = async (req, res) => {
       id: message.id,
       content: message.content,
       timestamp: message.timestamp,
-      sender: { id: message.senderId }
+      sender: { 
+        id: message.senderId, 
+        email: connection.user1.id === senderId 
+        ? connection.user1.email : connection.user2.email 
+      }
     };
 
     const socketId = getSocketId(recieverId);
