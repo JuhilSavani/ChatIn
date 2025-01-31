@@ -11,11 +11,6 @@ const addContact = () => {
     mutationFn: addFn,
     onSuccess: () => {
       queryClient.invalidateQueries(["connections"]);
-      toast.success("Contact added successfully!");
-    },
-    onError: (err) => {
-      console.error(err?.response?.data?.stack || err.stack);
-      toast.error(err?.response?.data?.message || err.message);
     },
   });
 };
