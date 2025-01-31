@@ -32,7 +32,7 @@ const Home = () => {
       socket.on("newConnection", (newConnection) => {
         const { connectedUser } = newConnection;
         setContacts((prevContacts) => [...prevContacts, newConnection]);
-        addContactMutate({ userId: connectedUser.id, email: connectedUser.email }, {
+        addContactMutate({ userId: user.id, email: connectedUser.email }, {
           onSuccess: () => {
             // TODO: deliver a meaningful toast message 
           }
@@ -61,7 +61,7 @@ const Home = () => {
       onSuccess: () => {
         setIsAdding(false);
         closeDialog();
-        toast.success(`${email} added successfully!`);
+        toast.success(`You are now connected with ${email}!`);
       },
       onError: (err) => {
         setIsAdding(false);
