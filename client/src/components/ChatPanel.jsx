@@ -30,6 +30,7 @@ const ChatPanel = ({ contact }) => {
 
   useEffect(() => {
     if (data && data.length) setMessages(data);
+    else setMessages([]);
 
     if (socket) {
       socket.on("newMessage", (newMessage) => {
