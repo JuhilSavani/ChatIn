@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
-import useSocket from "../utils/hooks/useSocket";
 import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
@@ -11,7 +10,6 @@ const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
 
   const { user } = useAuth();
-  const { socket } = useSocket();
   
   const dialogRef = useRef(null);
 
@@ -27,23 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     if (data && data.length) setContacts(data);
-
-    if (socket) {
-      socket.on("newConnection", (newConnection) => {
-        const { connectedUser } = newConnection;
-        setContacts((prevContacts) => [...prevContacts, newConnection]);
-        addContactMutate({ userId: user.id, email: connectedUser.email }, {
-          onSuccess: () => {
-            // TODO: deliver a meaningful toast message 
-          }
-        });
-      });
-    }
-
-    return () => {
-      if (socket) socket.off("newConnection");
-    };
-  }, [data, socket]);
+  }, [data]);
 
   const handleAdd = (e) => {
     e.preventDefault();

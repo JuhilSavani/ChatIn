@@ -1,18 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../utils/hooks/useAuth";
-import useSocket from "../utils/hooks/useSocket";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
-import { toast } from "react-toastify";
 
 const ChatPanel = ({ contact }) => {
   const { connectionId, connectedUser } = contact;
-
-  const queryClient = useQueryClient();
   
   const { user } = useAuth();
-  const { socket } = useSocket();
 
   const [messages, setMessages] = useState([]);
   const [isSending, setIsSending] = useState(false);
@@ -31,21 +25,7 @@ const ChatPanel = ({ contact }) => {
   useEffect(() => {
     if (data && data.length) setMessages(data);
     else setMessages([]);
-
-    if (socket) {
-      socket.on("newMessage", (newMessage) => {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        queryClient.setQueryData(["messages", connectionId], (oldMessages = []) => {
-          return [...oldMessages, newMessage];
-        });
-        toast.success(`New message from ${newMessage.sender.email}`);
-      });
-    }
-
-    return () => {
-      if (socket) socket.off("newMessage");
-    };
-  }, [data, socket, queryClient, connectionId]);
+  }, [data]);
 
   // Scroll down to the bottom on message state update
   useEffect(() => {

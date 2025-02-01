@@ -5,6 +5,7 @@ import { Op } from "sequelize";
 export const computedConnection = (userId, connection) => {
   const connectedUser = connection.user1.id === parseInt(userId) ? connection.user2 : connection.user1;
   return {
+    userId,
     connectionId: connection.id,
     status: connection.status,
     connectedUser: {

@@ -13,11 +13,11 @@ createRoot(document.getElementById("root")).render(
   // <StrictMode>
   <ResourceProvider>
     <AuthProvider>
+    <QueryClientProvider client={queryClient}>
       <SocketProvider>
-        <QueryClientProvider client={queryClient}>
           <App />
-        </QueryClientProvider>
       </SocketProvider>
+      </QueryClientProvider>
     </AuthProvider>
   </ResourceProvider>
   // </StrictMode>
