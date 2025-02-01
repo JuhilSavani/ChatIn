@@ -370,6 +370,9 @@ header nav {
     &:hover{
       background-color: $secondary-white;
     }
+    &.active{
+      background-color:  $secondary-white;
+    }
   }
 
   li i{
@@ -735,14 +738,17 @@ header nav {
       margin: 1rem auto;
       width: 80%;
     }
-    
+    >div:not(:last-child){
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid $primary-black;
+    }
     span.message-date{
       background-color: $bisque;
       border: 2px solid rgba(16, 16, 16, 0.75);
       padding: 0.5rem;
       border-radius: 4px;
       display: block;
-      margin: 2rem auto;
+      margin: 1rem auto;
       text-align: center;
       width: fit-content;
       min-width: 150px;

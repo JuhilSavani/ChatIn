@@ -97,7 +97,13 @@ const Home = () => {
               )}
               {!isLoading && !isError && Boolean(filteredContacts?.length) &&
                 filteredContacts.map((c) => (
-                  <li key={c.id || c.connectedUser.email} onClick={() => selectContact(c)}>
+                  <li 
+                  key={c.id || c.connectedUser.email} 
+                  onClick={() => selectContact(c)}
+                  className={
+                    (selectedContact?.connectedUser?.id === c?.connectedUser?.id) 
+                    ? "active" : ""
+                  }>
                     <i className="bx bx-user-circle"></i>
                     <div>
                       <h2>{c.connectedUser.name}</h2>
