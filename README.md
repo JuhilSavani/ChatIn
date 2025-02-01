@@ -2,6 +2,13 @@
 
 A project designed to explore and demonstrate the implementation of real-time communication using WebSockets.
 
+
+---
+
+<div align="center">
+    <img width="900" alt="Preview of the project" src="https://github.com/user-attachments/assets/ab01883b-d910-43f7-b055-03a64c8b59f8" />
+</div>
+
 ---
 
 ## Getting Started
