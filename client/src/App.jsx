@@ -62,8 +62,8 @@ const routes = createRoutesFromElements(
 
     <Route path="sign-in" element={<SignIn />} />
     <Route path="sign-up" element={<SignUp />} />
-    <Route path="verify/:email" element={<EmailVerify />} />
-
+    <Route path="verify" element={<EmailVerify />} />
+    
      {/* Catch all */}
      <Route path="*" element={<NotFound />} />
   </Route>

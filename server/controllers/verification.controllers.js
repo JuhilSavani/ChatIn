@@ -97,8 +97,8 @@ export const verifyAccount = async (req, res) => {
   const { email } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) return res.status(409).json({ message: "Email already exists." });
-    return res.sendStatus(201);
+    if (existingUser) return res.status(200).json({ isExisting: true });
+    return res.status(200).json({ isExisting: false });   
   } catch(error){
     console.error(error.stack);
     return res

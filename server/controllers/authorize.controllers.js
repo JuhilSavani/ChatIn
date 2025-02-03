@@ -85,6 +85,39 @@ export const register = async (req, res) => {
   }
 };
 
+export const passwordlessLogin = async (req, res) =>{
+  const { email } = req.body;
+  if (!email)
+    return res.status(400).json({
+      message: "Please provide both email to signin.",
+    });
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(404).json({ message: "User not found!" });
+    
+    const payload = { id: user.id, name: user.name, email, createdAt: user.createdAt };
+    const token = jwt.sign(
+      payload, 
+      JWT_SECRET, 
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("chatinToken", token, {
+      httpOnly: true,
+      secure: NODE_ENV_SECURE,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return res.status(200).json({ user: payload });
+  } catch (error) {
+    console.error(error.stack);
+    return res
+      .status(500)
+      .json({ message: "An error occurred during signing in!" });
+  }
+};
+
 export const logout = (req, res) => {
   if (!req.cookies?.chatinToken) return res.sendStatus(204); // No Content
 

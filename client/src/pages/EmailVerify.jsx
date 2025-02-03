@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import useAuth from "../utils/hooks/useAuth";
 import useResource from "../utils/hooks/useResource";
@@ -14,34 +14,44 @@ const EmailVerify = () => {
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { email } = useParams();
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
+  const referrer = searchParams.get("referrer"); 
+
   const navigate = useNavigate();
-  
+
   const handleVerify = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     const formData = new FormData(event.target);
     const { verificationCode: enteredCode } = Object.fromEntries(formData.entries());
     try {
-
       if(!enteredCode){
-        toast.error("Verification code is required.");
+        toast.error("Please enter the verification code, 😤!");
         setIsLoading(false);
         return;
       }
       if(parseInt(enteredCode) !== parseInt(resource.verificationCode)){
-        toast.error("Invalid verification code.");
+        toast.error("Invalid verification code, 😩!");
         setIsLoading(false);
         return;
       }
-
-      const { data } = await axios.post('/authorize/register', resource.userData);
-      setIsAuthenticated(true);
-      setUser(data?.user);
-      setResource({});
-      connectSocket();
-      toast.success("Registration successful!");
-      navigate("/", { replace: true });
+      if(referrer == 'signup'){
+        const { data } = await axios.post('/authorize/register', resource.userData);
+        setIsAuthenticated(true);
+        setUser(data?.user);
+        setResource({});
+        connectSocket();
+        toast.success("Registration successful, 🥳!");
+        navigate("/", { replace: true });
+      }else{
+        const { data } = await axios.post('/authorize/passwordlessLogin', { email });
+        setIsAuthenticated(true);
+        setUser(data?.user);
+        connectSocket();
+        toast.success("Great to see you again, 😍!");
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       console.error(error?.response?.data.stack || error.stack);
       toast.error(error?.response?.data || error.message);
@@ -50,16 +60,16 @@ const EmailVerify = () => {
     }
   };
   
-  const handleResend = async (event) => {
+  const handleSend = async (event) => {
     event.preventDefault();
     setIsSending(true);
     try {
-      const { data } =  await axios.get(`/verify/${email}`);
-      setResource((prev) => ({ ...prev, verificationCode: data?.verificationCode }));
-      toast.success( "Verification code sent to your email.");
-    } catch (error) {
+      const response =  await axios.get(`/verify/${email}`);
+      setResource((prevData) => ({ ...prevData, ...response.data }));
+      toast.info("Please check your email to get verification code, 🤗!");
+    } catch(error) {
       console.error(error?.response?.data.stack || error.stack);
-      toast.error(error?.response?.data || error.message);
+      toast.error("Something went wrong while sending the confirmation email, 😶!");
     } finally {
       setIsSending(false);
     }
@@ -73,10 +83,17 @@ const EmailVerify = () => {
         <p>Please check your inbox for a verification email.</p>
         <p>If you haven&apos;t received it, you can request a new one.</p>
         <form className="verify-form" onSubmit={handleVerify}>
+          <label htmlFor="email">Your Email Account:</label>
+          <input type="email" id="email" name="email" 
+            value={email} 
+            placeholder="..." 
+            required 
+            readOnly
+          />  
           <label htmlFor="verificationCode">Enter Verification Code:</label>
-          <input type="text" id="verificationCode" name="verificationCode" placeholder="..." />
-          <button className="resend-btn" onClick={handleResend}>{ isSending ? "Sending" : "Resend" }</button>
+          <input type="text" id="verificationCode" name="verificationCode" placeholder="..." required/>
           <button type="submit" className="verify-btn">{ isLoading ? "Verifying" : "Verify" }</button>
+          <button className="resend-btn" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
         </form>
       </div>
     </div>

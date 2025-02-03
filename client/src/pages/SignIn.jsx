@@ -5,6 +5,7 @@ import useSocket from "../utils/hooks/useSocket";
 import useAuth from "../utils/hooks/useAuth";
 import useValidate from "../utils/hooks/useValidate"
 import { toast } from 'react-toastify';
+import validator from "validator";
 
 const SignIn = () => {
   const { setIsAuthenticated, setUser } = useAuth();
@@ -12,7 +13,9 @@ const SignIn = () => {
   const validate = useValidate();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isForgotPwdLoading, setIsForgotPwdLoading] = useState(false);
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (event) =>{
     event.preventDefault();
@@ -33,7 +36,7 @@ const SignIn = () => {
       setIsAuthenticated(true);
       setUser(response?.data?.user);
       connectSocket();
-      toast.success("Great to see you again!");
+      toast.success("Great to see you again, 😍!");
       navigate("/", { replace: true });
     }catch(error){
       console.error(error.stack);
@@ -41,6 +44,31 @@ const SignIn = () => {
     }finally{
       setIsLoading(false);
     }
+  }
+
+  const handleForgotPwd = async () => {
+    if(!email){
+      toast.error("Please enter the email, 😙!");
+      return;
+    }
+    if(!validator.isEmail(email)){ 
+      toast.error("Invalid email format, 😑!");
+      return;
+    }
+    setIsForgotPwdLoading(true);
+    try{
+      const response = await axios.post('/verify/account', { email });
+      if(!response.data?.isExisting){
+        toast.error("Email not found, 😤!");
+        return;
+      }
+    } catch (error) {
+
+    } finally {
+      setIsForgotPwdLoading(false);
+    }
+    
+    navigate(`/verify?email=${email}&referrer=signin`);
   }
 
   return (
@@ -54,6 +82,7 @@ const SignIn = () => {
               id="email"
               name="email"
               placeholder="Enter your email here..."
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <label htmlFor="password">Password: </label>
@@ -64,6 +93,9 @@ const SignIn = () => {
               placeholder="Enter your password here..."
               required
             />
+            <span  className={isForgotPwdLoading && 'wait'} onClick={handleForgotPwd}>
+              forgot password?
+            </span>
             <span>
               Not register yet? <Link to="/sign-up">Sign up</Link>
             </span>

@@ -31,20 +31,21 @@ const SignUp = () => {
     }
 
     try {
-      await axios.post('/verify/account', { email: userData.email });
+      const response = await axios.post('/verify/account', { email: userData.email });
+      if(response.data?.isExisting){
+        toast.error("Email already exists, 😙!");
+        return;
+      }
       if(import.meta.env.VITE_NODE_ENV === "development"){
         const { data } = await axios.post('/authorize/register', userData);
         setIsAuthenticated(true);
         setUser(data?.user);
         connectSocket();
-        toast.success("Registration successful!");
+        toast.success("Registration successful, 🥳!");
         navigate("/", { replace: true });
-      }else{
-        const { data } =  await axios.get(`/verify/${userData.email}`);
-        setResource({userData, verificationCode: data?.verificationCode });
-        toast.success("Verification code sent to your email.");
-        navigate(`/verify/${userData.email}`);
-      }
+      }else navigate(`
+        /verify?email=${decodeURIComponent(userData.email)}&referrer=signup
+      `);
     } catch (error) {
       console.error(error.stack);
       toast.error(error?.response?.data.message || error?.message);

@@ -538,18 +538,40 @@ header nav {
 
   label{
     font-size: $font-md;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     margin-bottom: 0.5rem;
     margin-left: 0.2rem;
   }
 
-  span{
+  span:not(:last-of-type){
     font-size: $font-sm;
-    text-align: center;
-    margin: 1.5rem 0;
+    display: block;
+    margin: 0.5rem;
+    font-weight: 450;
+    &:hover{
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 
-  span a {
+  span:not(:last-of-type).wait{
+    opacity: 0.8;
+    &:hover{
+      cursor: progress;
+    }
+  }
+
+  span:last-of-type{
+    font-size: $font-sm;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+    background-color: $primary-white;
+    border: 2px dashed $secondary-black;
+  }
+
+   span:last-of-type a {
     font-weight: 450;
     margin-left: 0.25rem;
     &:hover{
@@ -863,7 +885,7 @@ header nav {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 580px;
+  width: 500px;
   background-color: $beige;
   font-size: $font-sm;
   padding: 1rem 2rem;
@@ -895,10 +917,14 @@ header nav {
     margin-bottom: 0.25rem;
   }
 
+  input:first-of-type:hover {
+    cursor: not-allowed;
+  }
+
   input{
     padding: 0 1rem;
     height: 40px;
-    width: 80%;
+    width: 100%;
     display: block;
     margin-bottom: 1rem;
     background-color: $primary-white;
@@ -924,14 +950,14 @@ header nav {
     height: 40px;
     border: 2px solid rgba(16, 16, 16, 0.75);
     transition: 0.3s ease;
-    margin-left: 1.25rem;
+    margin-left: 0;
     &:hover{
       box-shadow: 0 0 0 2px rgba(16, 16, 16, 0.75);
     }
   }
   .resend-btn{
     background-color: $primary-white;
-    margin: 0;
+    margin-left: 1.25rem;
   }
 }
 
