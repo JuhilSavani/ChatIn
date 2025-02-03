@@ -32,7 +32,7 @@ const Home = () => {
     const email = e.target.email.value;
 
     if (email === user.email) {
-      toast.error("Please provide a valid email other than yours!");
+      toast.error("Please provide a valid email other than yours, 😤!");
       closeDialog();
       return;
     }
@@ -43,13 +43,13 @@ const Home = () => {
       onSuccess: () => {
         setIsAdding(false);
         closeDialog();
-        toast.success(`You are now connected with ${email}!`);
+        toast.success(`You are now connected with ${email}, 🥳!`);
       },
       onError: (err) => {
         setIsAdding(false);
         closeDialog();
         console.error(err?.response?.data?.stack || err.stack);
-        toast.error(`An error occurred while adding ${email}!`);
+        toast.error(`Something went wrong while adding ${email}, 😶!`);
       },
     });
   };

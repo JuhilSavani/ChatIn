@@ -15,7 +15,7 @@ const Navbar = () => {
     try {
       await axios.post('/authorize/logout');
       setIsAuthenticated(false);
-      toast.success("Logged out successfuly!");
+      toast.success("Logged out successfuly, 😭!");
       navigate("/sign-in", {replace: true});
     } catch (error) {
       console.error(error?.response?.data.stack || error.stack);
