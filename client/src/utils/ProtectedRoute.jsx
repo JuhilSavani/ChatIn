@@ -20,7 +20,7 @@ const ProtectedRoute = () => {
         connectSocket();
       } catch (error) {
         console.error(error?.response?.data.stack ||error.stack);
-        toast.error("Please login to continue!");
+        toast.info("Please login to continue, 😙!");
         setIsAuthenticated(false); // User is not authenticated
         navigate("/sign-in", {replace: true});
       }
