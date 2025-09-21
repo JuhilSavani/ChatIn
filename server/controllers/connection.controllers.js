@@ -12,6 +12,7 @@ export const computedConnection = (userId, connection) => {
       id: connectedUser.id,
       name: connectedUser.name,
       email: connectedUser.email,
+      hasProfilePic: connectedUser.hasProfilePic,
     },
   };
 };
@@ -42,8 +43,8 @@ export const getConnections = async (req, res) => {
       },
       attributes: ["id", "status"],
       include: [
-        { model: User, as: "user1", attributes: ["id", "name", "email"] },
-        { model: User, as: "user2", attributes: ["id", "name", "email"] },
+        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic"] },
+        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic"] }, 
       ],
     });
 
@@ -87,8 +88,8 @@ export const createConnection = async (req, res) => {
       },
       attributes: ["id", "status"],
       include: [
-        { model: User, as: "user1", attributes: ["id", "name", "email"] },
-        { model: User, as: "user2", attributes: ["id", "name", "email"] },
+        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic"] },
+        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic"] }, 
       ],
     });
 
@@ -114,6 +115,7 @@ export const createConnection = async (req, res) => {
         id: user2.id,
         name: user2.name,
         email: user2.email,
+        hasProfilePic: user2.hasProfilePic,
       },
     };
     return res.status(201).json(result);

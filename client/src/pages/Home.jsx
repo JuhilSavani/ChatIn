@@ -104,7 +104,14 @@ const Home = () => {
                     (selectedContact?.connectedUser?.id === c?.connectedUser?.id) 
                     ? "active" : ""
                   }>
-                    <i className="bx bx-user-circle"></i>
+                    {c.connectedUser.hasProfilePic ? (
+                      <img
+                        src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${c.connectedUser.id}`}
+                        alt={c.connectedUser.name}
+                      />
+                    ) : (
+                      <i className="bx bx-user-circle"></i>
+                    )}
                     <div>
                       <h2>{c.connectedUser.name}</h2>
                       <span>{c.connectedUser.email}</span>

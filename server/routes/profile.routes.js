@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authenticateJWT } from "../config/passport.config.js";
-import { updateProfileName } from "../controllers/profile.controllers.js";
+import { authenticateJWT, upload } from "../middlewares.js";
+import { updateProfile } from "../controllers/profile.controllers.js";
 
 const router = Router();
 
-router.put("/name/:id", authenticateJWT, updateProfileName);
+router.put("/:id", authenticateJWT, upload.single("profilePic"), updateProfile);
 
 export default router;

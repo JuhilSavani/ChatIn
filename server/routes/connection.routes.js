@@ -1,6 +1,6 @@
 import { Router } from "express";
+import { authenticateJWT } from "../middlewares.js";
 import { createConnection, getConnections } from "../controllers/connection.controllers.js";
-import { authenticateJWT } from "../config/passport.config.js";
 
 const router = Router();
 

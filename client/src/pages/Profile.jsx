@@ -4,13 +4,18 @@ import axios from "../utils/apis/axios";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
+
+  const [profilePic, setProfilePic] = useState(null);
+  const [profilePicUrl, setProfilePicUrl] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const fileInputRef = useRef(null);
   const nameInputRef = useRef(null);
 
   useEffect(() => {
@@ -19,6 +24,8 @@ const Profile = () => {
       setEmail(user.email);
       const timeFormatter = new Intl.DateTimeFormat("en-GB");
       setCreatedAt(timeFormatter.format(new Date(user.createdAt)));
+      if (user.hasProfilePic) 
+        setProfilePicUrl(`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/profilePics/user_${user.id}`);
     }
   }, [user]);
 
@@ -28,30 +35,45 @@ const Profile = () => {
     }
   }, [isEditing]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePic(file);
+      setProfilePicUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSaveChanges = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
-    if (user.name.replace(/\s+/g, "").toLowerCase() === name.replace(/\s+/g, "").toLowerCase()) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const { data } = await axios.put(`/profile/name/${user.id}`, { name });
+    const isNameChanged =
+      user.name.replace(/\s+/g, "").toLowerCase() !== name.replace(/\s+/g, "").toLowerCase();
 
-      setUser(data.user);
-      setMessage({ type: "success", text: data.message });
+    try {
+      const formData = new FormData();
+
+      if (isNameChanged) formData.append("name", name); 
+      if (profilePic) formData.append("profilePic", profilePic);
+
+      if (!formData.has("name") && !formData.has("profilePic")) { 
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.put(`/profile/${user.id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setUser(response.data?.user);
+      setMessage({ type: "success", text: response.data?.message });
       setIsEditing(false);
 
       // TODO: Implement real-time profile update via sockets
     } catch (err) {
       console.error(err.stack);
-      setMessage({
-        type: "error",
-        text: err?.response?.data?.message || "Failed to update profile.",
-      });
+      setMessage({ type: "error", text: "Failed to update profile." });
     } finally {
       setLoading(false);
     }
@@ -61,9 +83,23 @@ const Profile = () => {
     <div className="page profile">
       <div className="container">
         <section className="profile-pic">
-          <h2>Profile</h2>
-          <span>Your profile information</span>
-          <i className="bx bxs-user-rectangle"></i>
+          <h2>Your Profile</h2>
+          <div className="pic-wrapper">
+            {profilePicUrl ? (
+              <img src={profilePicUrl} alt="Profile" />
+            ) : (
+              <i className="bx bxs-user-circle"></i>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <button type="button" onClick={() => fileInputRef.current.click()}>
+              <i className='bx bxs-edit'></i>
+            </button>
+          </div>
         </section>
 
         <section className="profile-info">
@@ -80,11 +116,10 @@ const Profile = () => {
               />
               <button
                 type="button"
-                className="edit-btn"
                 onClick={() => setIsEditing(true)}
                 disabled={loading}
               >
-                <i className='bx bxs-edit'></i>
+              <i className='bx bxs-edit'></i>
               </button>
             </div>
 
@@ -98,7 +133,7 @@ const Profile = () => {
 
           <div className="save-btn">
             <button onClick={handleSaveChanges}  disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
+              {loading ? "Saving..." : "Save"}
             </button> 
           </div>
 
