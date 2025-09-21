@@ -650,6 +650,11 @@ header nav {
       }
     }
 
+    input:disabled{
+      cursor: not-allowed;
+      background-color: rgba($primary-white, 0.6);
+    }
+
     label{
       display: block;
       font-size: $font-sm;
@@ -657,17 +662,69 @@ header nav {
       margin-left: 0.5rem;
       font-weight: 600;
     }
+
+    .editable-input{
+      position: relative;
+    }
+
+    .edit-btn{
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translate(0, -45%);
+      border: none;
+      background-color: transparent;
+      color: $primary-black;
+      font-size: $font-lg*0.95;
+      padding: 0.2rem;
+      padding-bottom: 0;
+      border-radius: 2px;
+      &:hover{
+        background-color: rgba($secondary-black, 0.2);
+      }
+      transition: 0.3s ease;
+    }
   }
 
-  .profile-info h3{
-    font-size: $font-lg;
-    border-bottom: 2px dashed $primary-black;
-    margin-bottom: 0.5rem;
-  }
-
-  .profile-info div{
+  .extra-profile-metadata{
     display: flex;
     justify-content: space-between;
+    padding: 0.2rem;
+    border: 2px dashed $primary-black;
+    background-color: $primary-white;
+  }
+
+  .msg{
+    padding: 0 0.2em;
+    margin-top: 0.4rem;
+  }
+
+  .msg-error{
+    background-color: #F75A5A;
+    color: $primary-white;
+  }
+
+  .msg-success{
+    background-color: $green;
+  }
+
+  .save-btn{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
+  .save-btn button{  
+    background-color: $green;
+    color: inherit;
+    padding: 0.4rem;
+    border: 2px solid rgba(16, 16, 16, 0.75);
+    border-radius: 6px;
+    font-weight: 600;
+    &:hover{
+      box-shadow: 0 0 0 2px rgba(16, 16, 16, 0.75);
+    }
+    transition: 0.3s ease;
   }
 }
 
