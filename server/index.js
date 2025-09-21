@@ -7,6 +7,7 @@ import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
 import connectionRoutes from "./routes/connection.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import profileRoutes from "./routes/profile.routes.js"
 import verificationRoutes from "./routes/verification.routes.js"
 import { app, server } from "./socket.js";
 import path from "path";
@@ -46,6 +47,7 @@ if(!isProduction){
 app.use("/api/authorize", authRoutes);
 app.use("/api/connections", connectionRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/api/verify", verificationRoutes);
 
 if(isProduction){
