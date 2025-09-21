@@ -16,8 +16,11 @@ export const sequelize = new Sequelize(PG_URI, {
 export const connectPostgres = async () => {
   try {
     await sequelize.authenticate();
-    console.log("postgres connected successfully!");
-    if (process.env.NODE_ENV === "development") await sequelize.sync();
+    console.log("Connected to postgres successfully!");
+    if (process.env.NODE_ENV === "development"){
+      await sequelize.sync({ alter: true });
+      console.log("Postgres database synced successfully!");
+    }
   } catch (error) {
     console.log("Unable to connect to postgres: ", error.message);
   }
