@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuthentication = async () => {
+    (async () => {
       try {
         const response  = await axios.get("/authorize/status");
         setIsAuthenticated(true); // User is authenticated
@@ -24,9 +24,7 @@ const ProtectedRoute = () => {
         setIsAuthenticated(false); // User is not authenticated
         navigate("/sign-in", {replace: true});
       }
-    };
-
-    checkAuthentication();
+    })();
   }, [navigate]);
 
   if (isAuthenticated === null) return <Loading />;
