@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateJWT } from "../config/passport.config.js";
+import { authenticateJWT } from "../middlewares.js";
 import { getMessages, sendMessage } from "../controllers/message.controllers.js";
 
 const router = Router();
