@@ -6,6 +6,7 @@ import useAuth from "../utils/hooks/useAuth";
 import useValidate from "../utils/hooks/useValidate"
 import { toast } from 'react-toastify';
 import validator from "validator";
+import clsx from "clsx";
 
 const SignIn = () => {
   const { setIsAuthenticated, setUser } = useAuth();
@@ -93,7 +94,7 @@ const SignIn = () => {
               placeholder="Enter your password here..."
               required
             />
-            <span  className={isForgotPwdLoading && 'wait'} onClick={handleForgotPwd}>
+            <span  className={clsx(isForgotPwdLoading && 'wait')} onClick={handleForgotPwd}>
               forgot password?
             </span>
             <span>
