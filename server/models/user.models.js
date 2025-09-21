@@ -25,6 +25,11 @@ export const User = sequelize.define(
       allowNull: false,
       unique: false,
     },
+    hasProfilePic: {  
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     tableName: "users",
