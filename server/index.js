@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -11,8 +10,6 @@ import messageRoutes from "./routes/message.routes.js";
 import verificationRoutes from "./routes/verification.routes.js"
 import { app, server } from "./socket.js";
 import path from "path";
-
-dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 const isProduction = process.env.NODE_ENV === "production";

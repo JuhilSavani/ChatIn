@@ -1,9 +1,6 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
 import { User } from "../models/user.models.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const CLIENT_ID = process.env.GMAIL_CLIENT_ID; 
 const CLIENT_SECRET = process.env.GMAIL_CLIENT_SECRET; 

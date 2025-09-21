@@ -1,7 +1,4 @@
 import { Sequelize } from "sequelize";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const PG_URI = process.env.NODE_ENV === "development" ? process.env.PG_URI_DEV : process.env.PG_URI_PROD;
 

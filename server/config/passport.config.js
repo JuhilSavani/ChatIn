@@ -1,9 +1,6 @@
-import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy } from 'passport-jwt';
 import { User } from "../models/user.models.js";
-
-dotenv.config();
 
 const jwtOptions = {
   jwtFromRequest: (req) => req?.cookies?.chatinToken || null,
