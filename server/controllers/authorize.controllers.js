@@ -1,9 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const NODE_ENV_SECURE = process.env.NODE_ENV === "production";
@@ -18,7 +15,13 @@ export const login = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const payload = { id: user.id, name: user.name, email, createdAt: user.createdAt };
+      const payload = { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        createdAt: user.createdAt 
+      }
+
       const token = jwt.sign(
         payload, 
         JWT_SECRET, 
@@ -41,7 +44,7 @@ export const login = async (req, res) => {
     console.error(error.stack);
     return res
       .status(500)
-      .json({ message: "An error occurred during signing in!" });
+      .json({ message: "Server error. Please try again later." });
   }
 };
 
@@ -62,7 +65,13 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const payload = { id: newUser.id, name, email, createdAt: newUser.createdAt }
+    const payload = { 
+      id: newUser.id, 
+      name: newUser.name, 
+      email: newUser.email, 
+      createdAt: newUser.createdAt 
+    }
+
     const token = jwt.sign(
       payload, 
       JWT_SECRET,
@@ -81,7 +90,7 @@ export const register = async (req, res) => {
     console.error(error.stack);
     return res
       .status(500)
-      .json({ message: "An error occurred during signing up!" });
+      .json({ message: "Server error. Please try again later." });
   }
 };
 
@@ -95,7 +104,13 @@ export const passwordlessLogin = async (req, res) =>{
     const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "User not found!" });
     
-    const payload = { id: user.id, name: user.name, email, createdAt: user.createdAt };
+    const payload = { 
+      id: user.id, 
+      name: user.name, 
+      email: user.email, 
+      createdAt: user.createdAt 
+    }
+
     const token = jwt.sign(
       payload, 
       JWT_SECRET, 
@@ -114,7 +129,7 @@ export const passwordlessLogin = async (req, res) =>{
     console.error(error.stack);
     return res
       .status(500)
-      .json({ message: "An error occurred during signing in!" });
+      .json({ message: "Server error. Please try again later." });
   }
 };
 
