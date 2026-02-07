@@ -1,4 +1,3 @@
-import nodemailer from "nodemailer";
 import { google } from "googleapis";
 import { User } from "../models/user.models.js";
 
@@ -11,30 +10,34 @@ const SENDER_EMAIL = process.env.SENDER_EMAIL;
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+const encodeMessage = (message) => {
+  return Buffer.from(message)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+};
+
+const buildRawEmail = ({ from, to, subject, html }) => {
+  const headers = [
+    `From: ${from}`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    "MIME-Version: 1.0",
+    'Content-Type: text/html; charset="UTF-8"',
+  ];
+
+  const message = `${headers.join("\r\n")}\r\n\r\n${html}`;
+  return encodeMessage(message);
+};
+
 export const verifyEmail = async (req, res) => {
   const { email } = req.params;
   try {
-    
-    const accessToken = await oAuth2Client.getAccessToken();
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    const transporter = nodemailer.createTransport({
-      pool: true,
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: SENDER_EMAIL, 
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token,
-      },
-      maxConnections: 5, // Adjust the max number of connections in the pool
-      maxMessages: 10,   // Adjust the max number of messages per connection
-      rateLimit: 10,     // Rate limit to control the number of messages sent per second
-    });
 
-    const mailOptions = {
+    const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+    const raw = buildRawEmail({
       from: `ChatIn <${SENDER_EMAIL}>`,
       to: email,
       subject: "Verify Your Email Address With ChatIn",
@@ -78,8 +81,12 @@ export const verifyEmail = async (req, res) => {
       </body>
       </html>
       `,
-    };
-    const result = await transporter.sendMail(mailOptions);
+    });
+
+    const result = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw },
+    });
     console.log("Email sent:", result);
     return res.status(200).json({ verificationCode });
   } catch (err) {
