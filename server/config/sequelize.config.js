@@ -1,23 +1,33 @@
 import { Sequelize } from "sequelize";
 
-const PG_URI = process.env.NODE_ENV === "development" ? process.env.PG_URI_DEV : process.env.PG_URI_PROD;
 
-export const sequelize = new Sequelize(PG_URI, {
-  dialect: "postgres",
-  logging: false,
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-});
+const isProduction = process.env.NODE_ENV !== "development";
+
+export const sequelize = new Sequelize(
+  isProduction ? process.env.PG_URI_PROD : process.env.PG_URI_DEV, 
+  {
+    dialect: "postgres",
+    logging: false,
+    dialectOptions: isProduction ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // Required for Supabase/Render connections
+      }
+    } : {}, // No special options needed for local dev
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
+);
 
 export const connectPostgres = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connected to postgres successfully!");
-    if (process.env.NODE_ENV === "development"){
+    if (!isProduction){
       await sequelize.sync({ alter: true });
       console.log("Postgres database synced successfully!");
     }
