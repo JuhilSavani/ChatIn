@@ -20,6 +20,19 @@ const EmailVerify = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!referrer || !email) {
+      toast.error("Please register first, 😤!");
+      navigate("/sign-up", { replace: true });
+      return;
+    }
+
+    if (referrer === "signup" && !resource?.userData) {
+      toast.error("Please register first, 😤!");
+      navigate("/sign-up", { replace: true });
+    }
+  }, [email, referrer, navigate, resource, setResource]);
+
   const handleVerify = async (event) => {
     event.preventDefault();
     setIsLoading(true);

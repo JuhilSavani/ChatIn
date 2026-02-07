@@ -23,6 +23,7 @@ const SignIn = () => {
     setIsLoading(true);
     const formData = new FormData(event.target);
     const userData = Object.fromEntries(formData.entries());
+    if (typeof userData.email === "string") userData.email = userData.email.trim();
 
     // Validate the data
     const validationError = validate(userData, { type: "login" });
@@ -48,17 +49,18 @@ const SignIn = () => {
   }
 
   const handleForgotPwd = async () => {
-    if(!email){
+    const trimmedEmail = email.trim();
+    if(!trimmedEmail){
       toast.error("Please enter the email, 😙!");
       return;
     }
-    if(!validator.isEmail(email)){ 
+    if(!validator.isEmail(trimmedEmail)){ 
       toast.error("Invalid email format, 😑!");
       return;
     }
     setIsForgotPwdLoading(true);
     try{
-      const response = await axios.post('/verify/account', { email });
+      const response = await axios.post('/verify/account', { email: trimmedEmail });
       if(!response.data?.isExisting){
         toast.error("Email not found, 😤!");
         return;
@@ -69,7 +71,7 @@ const SignIn = () => {
       setIsForgotPwdLoading(false);
     }
     
-    navigate(`/verify?email=${email}&referrer=signin`);
+    navigate(`/verify?email=${encodeURIComponent(trimmedEmail)}&referrer=signin`);
   }
 
   return (

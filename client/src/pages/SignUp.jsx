@@ -21,6 +21,8 @@ const SignUp = () => {
     setIsLoading(true);
     const formData = new FormData(event.target);
     const userData = Object.fromEntries(formData.entries());
+    if (typeof userData.name === "string") userData.name = userData.name.trim();
+    if (typeof userData.email === "string") userData.email = userData.email.trim();
 
     // Validate the data
     const validationError = validate(userData, { type: "register" });
@@ -43,9 +45,11 @@ const SignUp = () => {
         connectSocket();
         toast.success("Registration successful, 🥳!");
         navigate("/", { replace: true });
-      }else navigate(`
-        /verify?email=${decodeURIComponent(userData.email)}&referrer=signup
-      `);
+      } else {
+        // Persist user data for the verify step (in-memory only)
+        setResource({ userData });
+        navigate(`/verify?email=${encodeURIComponent(userData.email)}&referrer=signup`);
+      }
     } catch (error) {
       console.error(error.stack);
       toast.error(error?.response?.data.message || error?.message);
