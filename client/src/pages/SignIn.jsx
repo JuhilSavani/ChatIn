@@ -86,7 +86,7 @@ const SignIn = () => {
               name="email"
               placeholder="Enter your email here..."
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-none rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
             <label htmlFor="password" className="block text-md mt-4 mb-2 ml-1">Password: </label>
@@ -95,7 +95,7 @@ const SignIn = () => {
               id="password"
               name="password"
               placeholder="Enter your password here..."
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-none rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
             <span  className={clsx('block text-sm m-2 font-[450] hover:cursor-pointer hover:underline', isForgotPwdLoading && 'opacity-80 hover:!cursor-progress')} onClick={handleForgotPwd}>

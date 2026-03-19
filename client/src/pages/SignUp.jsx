@@ -69,7 +69,7 @@ const SignUp = () => {
               id="name"
               name="name"
               placeholder="Enter your name here...  "
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-none rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
             <label htmlFor="email" className="block text-md mt-4 mb-2 ml-1">Email: </label>
@@ -78,7 +78,7 @@ const SignUp = () => {
               id="email"
               name="email"
               placeholder="Enter your email here..."
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-none rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
             <label htmlFor="password" className="block text-md mt-4 mb-2 ml-1">Password: </label>
@@ -87,7 +87,7 @@ const SignUp = () => {
               id="password"
               name="password"
               placeholder="Enter your password here..."
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-none rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
             <span className="block text-sm text-center py-1 px-2 mt-4 mb-5 bg-primary-white border-2 border-dashed border-secondary-black">
