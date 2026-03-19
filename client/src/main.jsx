@@ -1,6 +1,6 @@
 // import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./styles.scss";
+import "./styles.css";
 import App from "./App.jsx";
 import { ResourceProvider } from "./utils/contexts/ResourceContext.jsx";
 import { AuthProvider } from "./utils/contexts/AuthContext.jsx";

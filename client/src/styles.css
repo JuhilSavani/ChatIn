@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary-black: #333;
+  --color-secondary-black: #444;
+  --color-primary-white: #FFFFFF;
+  --color-secondary-white: #F8F0DF;
+  --color-beige: #FCF9C6;
+  --color-bisque: #FDE49E;
+  --color-green: #9DDE8B;
+  --color-deem-red: #F6D6D6;
+
+  --font-rubik: Rubik, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  
+  --text-sm: 1.05rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5rem;
+  --text-xl: 2.5rem;
+  --text-xxl: 4.5rem;
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+    background-color: var(--color-secondary-white);
+    color: var(--color-primary-black);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-rubik);
+  }
+
+  *, *::after, *::before {
+    -webkit-user-drag: none;
+  }
+
+  ::selection {
+    background-color: var(--color-bisque);
+  }
+
+  #app {
+    padding: 80px 0.5rem 0 0.5rem;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  :root {
+    --toastify-color-light: var(--color-primary-white);
+    --toastify-color-dark: var(--color-primary-black);
+    --toastify-color-info: var(--color-bisque);
+    --toastify-color-success: var(--color-green);
+    --toastify-color-warning: var(--color-beige);
+    --toastify-color-error: var(--color-deem-red);
+
+    --toastify-text-color-light: var(--color-primary-black);
+    --toastify-text-color-info: var(--color-primary-black);
+    --toastify-text-color-success: var(--color-primary-black);
+    --toastify-text-color-warning: var(--color-primary-black);
+    --toastify-text-color-error: var(--color-primary-black);
+
+    --toastify-color-progress-light: rgba(0, 0, 0, 0.2);
+    --toastify-color-progress-info: rgba(0, 0, 0, 0.2);
+    --toastify-color-progress-success: rgba(0, 0, 0, 0.2);
+    --toastify-color-progress-warning: rgba(0, 0, 0, 0.2);
+    --toastify-color-progress-error: rgba(0, 0, 0, 0.2);
+
+    --toastify-toast-bd-radius: 6px;
+    --toastify-font-family: inherit;
+  }
+
+  .Toastify__toast {
+    border: 2px solid rgba(16, 16, 16, 0.75) !important;
+    border-bottom: 5px solid rgba(16, 16, 16, 0.75) !important;
+    box-shadow: none !important;
+    min-height: auto !important;
+  }
+
+  .Toastify__toast-body {
+    font-weight: 600;
+  }
+
+  .Toastify__toast-body > div:nth-child(2) {
+    padding: 0.25rem 0;
+    font-size: 1rem;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  
+  .Toastify__toast-icon {
+    display: none !important;
+  }
+}

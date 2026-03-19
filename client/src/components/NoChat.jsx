@@ -2,12 +2,12 @@ import React from "react";
 
 const NoChat = () => {
   return (
-    <div className="no-chat">
+    <div className="text-center flex flex-col gap-4">
       <span>
-        <i className="bx bxs-message-alt-dots"></i>
+        <i className="bx bxs-message-alt-dots text-xl"></i>
       </span>
-      <h1>Welcome to ChatIn'</h1>
-      <p>Select any conversation from the sidebar to start chatting.</p>
+      <h1 className="text-xl">Welcome to ChatIn'</h1>
+      <p className="font-medium">Select any conversation from the sidebar to start chatting.</p>
     </div>
   );
 };

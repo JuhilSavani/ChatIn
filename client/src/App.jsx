@@ -44,8 +44,10 @@ const Layout = () => {
           pauseOnHover
           theme="colored"
         />
-        <footer>
-          <span>Built with ❤, ☕️ and lots of 🍪s!</span>
+        <footer className="fixed flex justify-center bottom-0 left-1/2 -translate-x-1/2 w-[90vw] min-w-[880px] bg-primary-white border-2 border-primary-black border-t-[5px] border-b-0 rounded-t-md py-3 translate-y-[80%] hover:translate-y-0 transition-transform duration-300 ease-in-out z-50 cursor-pointer">
+          <span className="text-sm font-bold px-[0.4rem] py-[0.1rem] text-primary-black border-b-[2px] border-dashed border-primary-black pointer-events-auto">
+            Built with ❤, ☕️ and lots of 🍪s!
+          </span>
         </footer>
     </>
   );

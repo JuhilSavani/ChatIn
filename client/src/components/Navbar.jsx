@@ -26,20 +26,37 @@ const Navbar = () => {
   };
   
   return (
-    <header>
-      <nav>
-        <span>
-          <Link><i className="bx bxs-message-alt-dots"></i>ChatIn'</Link>
+    <header className="fixed top-0 left-1/2 -translate-x-1/2 min-w-[880px] w-[calc(100vw-1rem)] px-10 my-2 z-10 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+      <nav className="flex items-center justify-between h-[60px]">
+        <span className="text-md font-semibold text-center">
+          <Link className="flex flex-col items-center leading-tight">
+            <i className="bx bxs-message-alt-dots text-lg block"></i>ChatIn'
+          </Link>
         </span>
-        <ul>
-          <li>
-            <NavLink to="/about"><i className='bx bxs-info-square' ></i>About</NavLink>
+        <ul className="flex items-center gap-8 px-8">
+          <li className="text-sm">
+            <NavLink 
+              to="/about"
+              className="text-sm text-inherit border-none inline-flex items-center gap-2 py-2 px-3 rounded bg-secondary-black/10 transition-all duration-300 ease-in-out [&.active]:ring-2 [&.active]:ring-[#101010]/75"
+            >
+              <i className="bx bxs-info-square text-lg"></i>About
+            </NavLink>
           </li>
-          <li>
-            <NavLink to="/profile"><i className='bx bxs-user-account' ></i>Profile</NavLink>
+          <li className="text-sm">
+            <NavLink 
+              to="/profile"
+              className="text-sm text-inherit border-none inline-flex items-center gap-2 py-2 px-3 rounded bg-secondary-black/10 transition-all duration-300 ease-in-out [&.active]:ring-2 [&.active]:ring-[#101010]/75"
+            >
+              <i className="bx bxs-user-account text-lg"></i>Profile
+            </NavLink>
           </li>
-          <li>
-            <button onClick={logout}><i className='bx bxs-right-arrow-square'></i>{isLoading ? "Exiting" : "Logout"}</button>
+          <li className="text-sm">
+            <button 
+              onClick={logout}
+              className="text-sm text-inherit inline-flex items-center gap-2 py-[0.35rem] px-[0.6rem] rounded transition-all duration-300 ease-in-out border-2 border-[#101010]/75 bg-deem-red hover:ring-4 hover:ring-[#101010]/75 cursor-pointer"
+            >
+              <i className="bx bxs-right-arrow-square text-lg"></i>{isLoading ? "Exiting" : "Logout"}
+            </button>
           </li>
         </ul>
       </nav>

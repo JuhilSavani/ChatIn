@@ -29,8 +29,12 @@ export const SocketProvider = ({ children }) => {
       });
       socketInstance.on("newMessage", (newMessage) => {
         queryClient.invalidateQueries(["messages", newMessage.connectionId]);
-        // TODO: improve this toasting 
-        toast.success(`New message from ${newMessage.sender.email}`);
+        toast.success(
+          <div className="w-[260px] overflow-hidden">
+            <span className="block font-bold border-b border-current pb-1 mb-1 truncate">{newMessage.sender.email}</span>
+            <span className="block text-[0.9rem] truncate">{newMessage.content}</span>
+          </div>
+        );
       });
 
       setSocket(socketInstance);
