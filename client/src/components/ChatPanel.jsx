@@ -116,25 +116,37 @@ const ChatPanel = ({ contact, onBack }) => {
   return (
     <div className="flex flex-col h-full min-h-0 w-full bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
       <section className="w-full bg-secondary-white p-3 sm:p-4 flex items-center gap-3 sm:gap-4 rounded-t-[4px] border-b border-primary-black/25">
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Back to contacts"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border-2 border-[#101010]/75 bg-primary-white transition-all duration-200 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer lg:hidden"
-          >
-            <i className="bx bx-arrow-back text-lg"></i>
-          </button>
-        )}
-        {connectedUser.hasProfilePic ? (
-          <img
-            className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
-            src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${connectedUser.id}`}
-            alt={connectedUser.name}
-          />
-        ) : (
-          <i className="bx bx-user-circle text-[2.75rem] sm:text-[3.125rem]"></i>
-        )}
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Back to contacts"
+              className="inline-flex items-center justify-center p-0 text-primary-black/70 transition-all duration-200 hover:-translate-x-0.5 hover:text-primary-black focus:outline-none active:-translate-x-1 lg:hidden"
+            >
+              <svg
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width={36}
+                height={36}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M14.29 6.29 8.59 12l5.7 5.71 1.42-1.42-4.3-4.29 4.3-4.29z"></path>
+              </svg>
+            </button>
+          )}
+          {onBack && <span aria-hidden="true" className="h-10 w-[3px] bg-primary-black ml-1 mr-2 lg:hidden"></span>}
+          {connectedUser.hasProfilePic ? (
+            <img
+              className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
+              src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${connectedUser.id}`}
+              alt={connectedUser.name}
+            />
+          ) : (
+            <i className="bx bx-user-circle text-[2.75rem] sm:text-[3.125rem]"></i>
+          )}
+        </div>
         <div className="flex min-w-0 flex-col justify-center gap-[6px]">
           <h2 className="m-0 truncate p-0 text-[1rem] font-bold leading-none sm:text-[1.15rem]">{connectedUser.name}</h2>
           <span className="m-0 truncate p-0 text-[0.8rem] leading-none sm:text-[0.85rem]">{connectedUser.email}</span>
@@ -183,7 +195,7 @@ const ChatPanel = ({ contact, onBack }) => {
             className="block px-4 py-[0.7rem] text-inherit bg-transparent outline-none border-none text-[0.95rem] placeholder:opacity-80 w-full resize-none min-h-[46px] max-h-[140px] leading-relaxed"
           />
         </div>
-        <button onClick={handleSendMessage} disabled={isSending || !inputText.trim()} className={`flex-shrink-0 inline-flex h-[46px] w-[46px] items-center justify-center text-[1.5rem] rounded-md border-2 transition-all duration-200 sm:h-[51.6px] ${inputText.trim() && !isSending ? "bg-primary-black border-primary-black text-primary-white hover:bg-secondary-black active:scale-[0.95] cursor-pointer" : "bg-primary-black/10 border-transparent text-primary-black/50 cursor-not-allowed"}`} >
+        <button onClick={handleSendMessage} disabled={isSending || !inputText.trim()} className={`mb-px flex-shrink-0 inline-flex h-[50px] w-[50px] items-center justify-center text-[1.5rem] rounded-md border-2 transition-all duration-200 sm:h-[51.6px] sm:w-[51.6px] ${inputText.trim() && !isSending ? "bg-primary-black border-primary-black text-primary-white hover:bg-secondary-black active:scale-[0.95] cursor-pointer" : "bg-primary-black/10 border-transparent text-primary-black/50 cursor-not-allowed"}`} >
           <i className="bx bx-up-arrow-alt"></i>
         </button>
       </section>

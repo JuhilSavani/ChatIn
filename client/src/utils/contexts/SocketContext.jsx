@@ -30,9 +30,13 @@ export const SocketProvider = ({ children }) => {
       socketInstance.on("newMessage", (newMessage) => {
         queryClient.invalidateQueries(["messages", newMessage.connectionId]);
         toast.success(
-          <div className="w-[260px] overflow-hidden">
-            <span className="block font-bold border-b border-current pb-1 mb-1 truncate">{newMessage.sender.email}</span>
-            <span className="block text-[0.9rem] truncate">{newMessage.content}</span>
+          <div className="min-w-0 max-w-full overflow-hidden pr-3">
+            <span className="mb-1 block truncate border-b border-current pb-1 font-bold">
+              {newMessage.sender.email}
+            </span>
+            <span className="block truncate text-[0.9rem]">
+              {newMessage.content}
+            </span>
           </div>
         );
       });
