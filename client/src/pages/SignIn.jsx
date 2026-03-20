@@ -76,7 +76,7 @@ const SignIn = () => {
 
   return (
     <div className="page flex h-full min-h-0 w-full items-center justify-center overflow-auto py-2 sm:py-8">
-      <div className="grid w-full max-w-5xl lg:grid-cols-2 lg:overflow-hidden lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px] lg:bg-beige">
+      <div className="grid w-full max-w-5xl lg:min-h-[40rem] xl:min-h-[44rem] lg:grid-cols-2 lg:overflow-hidden lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px] lg:bg-beige">
         <section className="grid place-items-center px-2 py-2 sm:p-6 lg:border-r-2 lg:border-r-[#101010]/75">
           <form onSubmit={handleSubmit} noValidate className="mb-0 w-full max-w-xl rounded-md border-2 border-primary-black border-b-[5px] border-b-[#101010]/75 bg-bisque px-4 py-5 sm:p-8">
             <div className="mb-4 text-center lg:hidden">
