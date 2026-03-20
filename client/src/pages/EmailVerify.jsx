@@ -89,25 +89,27 @@ const EmailVerify = () => {
   };
   
   return (
-    <div className="min-h-[calc(100vh-80px)] w-full flex items-center justify-center page py-8">
-      <div className="w-[500px] bg-beige text-sm px-8 pb-4 pt-4 rounded-md border-2 border-[#101010]/75 border-b-[5px]">
-        <span className="block text-center text-[9rem] h-[150px]"><i className='bx bxs-envelope'></i></span>
-        <h1 className="text-center text-xl">Verify your email address</h1>
+    <div className="page flex min-h-full w-full items-center justify-center py-4 sm:py-8">
+      <div className="w-full max-w-[500px] rounded-md border-2 border-[#101010]/75 border-b-[5px] bg-beige px-4 pb-4 pt-4 text-sm sm:px-8">
+        <span className="block h-[110px] text-center text-[6rem] sm:h-[150px] sm:text-[9rem]"><i className='bx bxs-envelope'></i></span>
+        <h1 className="text-center text-[1.9rem] sm:text-xl">Verify your email address</h1>
         <p className="text-center">Please check your inbox for a verification email.</p>
         <p className="text-center">If you haven&apos;t received it, you can request a new one.</p>
-        <form className="px-8 my-4" onSubmit={handleVerify}>
+        <form className="my-4 px-0 sm:px-4" onSubmit={handleVerify}>
           <label htmlFor="email" className="block font-semibold mb-1">Your Email Account:</label>
           <input type="email" id="email" name="email" 
             value={email} 
             placeholder="..." 
-            className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 hover:cursor-not-allowed placeholder:text-[1.875rem]"
+            className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 hover:cursor-not-allowed placeholder:text-xl sm:placeholder:text-[1.875rem]"
             required 
             readOnly
           />  
           <label htmlFor="verificationCode" className="block font-semibold mb-1">Enter Verification Code:</label>
-          <input type="text" id="verificationCode" name="verificationCode" placeholder="..." className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:text-[1.875rem]" required/>
-          <button type="submit" className="bg-green text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer">{ isLoading ? "Verifying" : "Verify" }</button>
-          <button className="bg-primary-white ml-5 text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
+          <input type="text" id="verificationCode" name="verificationCode" placeholder="..." className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:text-xl sm:placeholder:text-[1.875rem]" required/>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button type="submit" className="bg-green text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer">{ isLoading ? "Verifying" : "Verify" }</button>
+            <button className="bg-primary-white text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
+          </div>
         </form>
       </div>
     </div>

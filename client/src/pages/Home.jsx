@@ -1,24 +1,44 @@
 import React, { useRef, useState, useEffect } from "react";
 import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
 import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
+import axios from "../utils/apis/axios";
 
 const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
 
-  const { user } = useAuth();
+  const { user, setIsAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   const dialogRef = useRef(null);
 
   const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
   const [isAdding, setIsAdding] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [search, setSearch] = useState(""); 
 
   const { mutate: addContactMutate } = addContact();
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await axios.post('/authorize/logout');
+      setIsAuthenticated(false);
+      toast.success("Logged out successfully, 😭!");
+      navigate("/sign-in", { replace: true });
+    } catch (error) {
+      console.error(error?.response?.data?.stack || error.stack);
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const openDialog = () => dialogRef.current?.showModal();
   const closeDialog = () => dialogRef.current?.close();
@@ -61,25 +81,26 @@ const Home = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-80px)] grid place-items-center page">
-      <div className="grid grid-cols-[3fr_7fr] min-w-[880px] min-h-[500px] w-[80vw] h-[80vh] bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px]">
-        <section className="flex flex-col h-full overflow-y-hidden rounded-l-md border-r-2 border-[#101010]/75">
-          <div className="relative flex justify-between items-center px-4 py-3 m-2 rounded-md border-2 border-[#101010]/75 border-b-[5px] overflow-hidden pt-5 group">
-            <div className="absolute grid place-items-center top-0 py-3 px-4 w-[90%] left-1/2 -translate-x-1/2 -translate-y-[80%] rounded-b-md border-2 border-[#101010]/75 border-t-0 border-b-[5px] transition-all duration-300 ease-in-out hover:translate-y-0 bg-primary-white z-10">
-              <i className="bx bx-search text-md absolute top-1/2 left-[25px] -translate-y-1/2 -scale-x-100"></i>
-              <input type="text" placeholder="Search" value={search}
-                onChange={(e) => setSearch(e.target.value)} 
-                className="w-full h-[35px] pr-2 pl-8 text-inherit bg-secondary-white rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
-              />
-            </div>
-            <span className="inline-flex gap-2 items-center text-lg">
+    <div className="grid h-full min-h-0 w-full grid-cols-1 overflow-hidden bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] lg:grid-cols-[minmax(18rem,3fr)_minmax(0,7fr)]">
+        <section className={`min-h-0 flex-col overflow-hidden ${selectedContact?.status ? "hidden lg:flex" : "flex"} lg:border-r-2 lg:border-r-[#101010]/75`}>
+          <div className="relative m-2 mb-0 flex items-center justify-between overflow-hidden rounded-md border-2 border-[#101010]/75 border-b-[5px] px-3 py-3 sm:px-4">
+            <span className="inline-flex items-center gap-2 text-base sm:text-lg">
               <i className="bx bxs-contact text-[1.875rem]"></i>Contacts
             </span>
             <button className="bg-green text-md text-inherit py-[0.1rem] px-2 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={openDialog}>
               <i className="bx bxs-user-plus text-[1.875rem]"></i>
             </button>
           </div>
-          <div className="overflow-y-hidden flex-1 p-2">
+          <div className="px-2 pt-2">
+            <div className="relative flex items-center mb-2 p-3 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+              <i className="bx bx-search text-md absolute left-[20px] top-1/2 -translate-y-1/2 -scale-x-100"></i>
+              <input type="text" placeholder="Search" value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full h-[35px] pr-2 pl-8 text-inherit bg-secondary-white rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+              />
+            </div>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-hidden p-2 pt-0">
             <ul className="h-full overflow-y-auto rounded-md border-2 border-[#101010]/75 border-b-[5px]">
               {isLoading && (
                 <li className="flex items-center gap-4 p-4 bg-primary-white rounded-md border-b border-primary-black/25">
@@ -101,28 +122,56 @@ const Home = () => {
                   <li 
                   key={c.id || c.connectedUser.email} 
                   onClick={() => selectContact(c)}
-                  className={`flex items-center gap-4 p-4 bg-primary-white rounded-md border-b border-primary-black/25 cursor-pointer hover:bg-secondary-white transition-colors duration-200 ${(selectedContact?.connectedUser?.id === c?.connectedUser?.id) ? "!bg-secondary-white" : ""}`}>
+                  className={`flex items-center gap-3 p-3 bg-primary-white rounded-md border-b border-primary-black/25 cursor-pointer transition-colors duration-200 hover:bg-secondary-white sm:gap-4 sm:p-4 ${(selectedContact?.connectedUser?.id === c?.connectedUser?.id) ? "!bg-secondary-white" : ""}`}>
                     {c.connectedUser.hasProfilePic ? (
                       <img
-                        className="w-[49px] h-[49px] rounded-full object-cover border-2 border-primary-black"
+                        className="h-[45px] w-[45px] rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
                         src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${c.connectedUser.id}`}
                         alt={c.connectedUser.name}
                       />
                     ) : (
-                      <i className="bx bx-user-circle text-[3.125rem]"></i>
+                      <i className="bx bx-user-circle text-[2.8rem] sm:text-[3.125rem]"></i>
                     )}
-                    <div className="w-full overflow-hidden">
-                      <h2 className="block text-sm whitespace-nowrap overflow-hidden text-ellipsis w-[90%]">{c.connectedUser.name}</h2>
-                      <span className="block text-sm whitespace-nowrap overflow-hidden text-ellipsis w-[90%]">{c.connectedUser.email}</span>
+                    <div className="w-full min-w-0 overflow-hidden">
+                      <h2 className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">{c.connectedUser.name}</h2>
+                      <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">{c.connectedUser.email}</span>
                     </div>
                   </li>
                 ))
               }
             </ul>
           </div>
+          {/* Profile footer */}
+          <div className="p-2 pt-0">
+            <div className="flex items-center gap-3 p-3 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+              <div onClick={() => navigate("/profile")} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
+                {user.hasProfilePic ? (
+                  <img
+                    className="w-[38px] h-[38px] rounded-full object-cover border-2 border-primary-black flex-shrink-0"
+                    src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${user.id}`}
+                    alt={user.name}
+                  />
+                ) : (
+                  <i className="bx bx-user-circle text-[2.4rem] flex-shrink-0"></i>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{user.name}</p>
+                  <p className="text-xs leading-tight whitespace-nowrap overflow-hidden text-ellipsis opacity-70">{user.email}</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                title="Logout"
+                className="flex-shrink-0 inline-flex items-center justify-center p-1 rounded-md border-2 border-[#101010]/75 bg-deem-red transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60"
+              >
+                <i className="bx bxs-right-arrow-square text-lg"></i>
+              </button>
+            </div>
+          </div>
         </section>
-        <dialog ref={dialogRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-black/25 border-b-[5px] rounded-md w-[400px] backdrop:bg-primary-black/25 bg-bisque text-primary-black">
-          <div className="p-8">
+        <dialog ref={dialogRef} className="absolute top-1/2 left-1/2 w-[min(400px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+          <div className="p-5 sm:p-8">
             <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Add Contact</h3>
             <form onSubmit={handleAdd}>
               <label className="block text-md ml-2 font-semibold">
@@ -150,10 +199,9 @@ const Home = () => {
             </form>
           </div>
         </dialog>
-        <section className="grid place-items-center p-2">
-          {selectedContact?.status ? <ChatPanel contact={selectedContact}/> : <NoChat />}
+        <section className={`min-h-0 flex-col overflow-hidden p-2 ${selectedContact?.status ? "flex" : "hidden lg:flex"}`}>
+          {selectedContact?.status ? <ChatPanel contact={selectedContact} onBack={() => selectContact({})} /> : <NoChat />}
         </section>
-      </div>
     </div>
   );
 };

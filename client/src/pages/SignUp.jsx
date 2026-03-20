@@ -59,11 +59,18 @@ const SignUp = () => {
   };
   
   return (
-    <div className="min-h-[calc(100vh-80px)] w-full flex items-center justify-center page py-8">
-      <div className="w-[80vw] bg-beige rounded-md grid grid-cols-2 min-w-[700px] min-h-[580px] border-2 border-[#101010]/75 border-b-[5px]">
-        <section className="grid place-items-center border-r-2 border-[#101010]/75">
-          <form onSubmit={handleSubmit} noValidate className="bg-bisque p-8 border-2 border-primary-black w-[80%] rounded-md mb-4 border-b-[5px] border-b-[#101010]/75">
-            <label htmlFor="name" className="block text-md mt-4 mb-2 ml-1">Name: </label>
+    <div className="page flex h-full min-h-0 w-full items-center justify-center overflow-auto py-2 sm:py-8">
+      <div className="grid w-full max-w-5xl lg:grid-cols-2 lg:overflow-hidden lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px] lg:bg-beige">
+        <section className="grid place-items-center px-2 py-2 sm:p-6 lg:border-r-2 lg:border-r-[#101010]/75">
+          <form onSubmit={handleSubmit} noValidate className="mb-0 w-full max-w-xl rounded-md border-2 border-primary-black border-b-[5px] border-b-[#101010]/75 bg-bisque px-4 py-5 sm:p-8">
+            <div className="mb-4 text-center lg:hidden">
+              <h2 className="text-lg">Join our community!</h2>
+              <p className="mt-2 font-medium">
+                Connect with friends, share moments, and stay in touch with your
+                loved ones.
+              </p>
+            </div>
+            <label htmlFor="name" className="ml-1 mt-3 mb-1.5 block text-md sm:mt-4 sm:mb-2">Name: </label>
             <input
               type="text"
               id="name"
@@ -72,7 +79,7 @@ const SignUp = () => {
               className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
-            <label htmlFor="email" className="block text-md mt-4 mb-2 ml-1">Email: </label>
+            <label htmlFor="email" className="ml-1 mt-3 mb-1.5 block text-md sm:mt-4 sm:mb-2">Email: </label>
             <input
               type="email"
               id="email"
@@ -81,7 +88,7 @@ const SignUp = () => {
               className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
-            <label htmlFor="password" className="block text-md mt-4 mb-2 ml-1">Password: </label>
+            <label htmlFor="password" className="ml-1 mt-3 mb-1.5 block text-md sm:mt-4 sm:mb-2">Password: </label>
             <input
               type="password"
               id="password"
@@ -90,22 +97,22 @@ const SignUp = () => {
               className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
               required
             />
-            <span className="block text-sm text-center py-1 px-2 mt-4 mb-5 bg-primary-white border-2 border-dashed border-secondary-black">
+            <span className="mt-3 mb-4 block border-2 border-dashed border-secondary-black bg-primary-white px-2 py-1 text-center text-sm sm:mt-4 sm:mb-5">
               Already have an account? <Link to="/sign-in" className="font-[450] ml-1 hover:underline">Sign in</Link>
             </span>
-            <button type="submit" className="block bg-primary-white text-inherit rounded-md text-lg py-2 px-6 mx-auto transition-all duration-300 border-2 border-secondary-black hover:ring-[3px] hover:ring-[#101010]/75 cursor-pointer">
+            <button type="submit" className="block w-full bg-primary-white text-inherit rounded-md text-lg py-2 px-6 mx-auto transition-all duration-300 border-2 border-secondary-black hover:ring-[3px] hover:ring-[#101010]/75 cursor-pointer sm:w-auto">
               {isLoading ? "Loading": "Register"}
             </button>
           </form>
         </section>
-        <section className="relative">
-          <div className="flex flex-col gap-4 absolute top-[30%] left-1/2 -translate-x-1/2 w-full text-center">
+        <section className="hidden items-center justify-center p-6 sm:p-10 lg:flex">
+          <div className="flex w-full max-w-md flex-col gap-4 text-center">
             <span className="flex flex-col items-center justify-center">
-              <i className="bx bxs-message-alt-dots text-[2.5rem]"></i>
-              <h1 className="text-[2.5rem]">ChatIn'</h1>
+              <i className="bx bxs-message-alt-dots text-[2rem] sm:text-[2.5rem]"></i>
+              <h1 className="text-[2rem] sm:text-[2.5rem]">ChatIn'</h1>
             </span>
-            <h2>Join our community!</h2>
-            <p className="mx-auto w-[60%] font-medium">
+            <h2 className="text-lg sm:text-xl">Join our community!</h2>
+            <p className="mx-auto w-full max-w-[28rem] font-medium">
               Connect with friends, share moments, and stay in touch with your
               loved ones.
             </p>

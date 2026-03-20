@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../utils/hooks/useAuth";
 import axios from "../utils/apis/axios";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const [profilePic, setProfilePic] = useState(null);
   const [profilePicUrl, setProfilePicUrl] = useState("");
@@ -81,15 +83,15 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] grid place-items-center page py-8">
-      <div className="flex flex-col min-w-[500px] py-8 px-12 w-[40vw] bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+    <div className="grid h-full w-full place-items-center overflow-auto py-4 sm:py-6">
+      <div className="flex w-full max-w-[42rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-12">
         <section className="flex flex-col font-semibold text-center profile-pic">
-          <h2 className="text-xl">Your Profile</h2>
-          <div className="relative w-[256px] h-[256px] flex justify-center items-center mx-auto">
+          <h2 className="mb-2 text-[2rem] sm:text-xl">Your Profile</h2>
+          <div className="relative mx-auto flex h-[200px] w-[200px] items-center justify-center sm:h-[256px] sm:w-[256px]">
             {profilePicUrl && !imageError ? (
-              <img className="block w-[232px] h-[232px] rounded-full object-cover border-[3px] border-primary-black" src={profilePicUrl} alt="Profile" onError={() => setImageError(true)} />
+              <img className="block h-[180px] w-[180px] rounded-full object-cover border-[3px] border-primary-black sm:h-[232px] sm:w-[232px]" src={profilePicUrl} alt="Profile" onError={() => setImageError(true)} />
             ) : (
-              <i className="bx h-[270px] w-[270px] bxs-user-circle text-[270px] leading-none"></i>
+              <i className="bx bxs-user-circle h-[210px] w-[210px] text-[210px] leading-none sm:h-[270px] sm:w-[270px] sm:text-[270px]"></i>
             )}
             <input
               type="file"
@@ -97,7 +99,7 @@ const Profile = () => {
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
-            <button className="h-[26px] w-[26px] absolute bottom-5 right-5 border-none bg-transparent text-primary-black text-[1.35rem] rounded-[2px] transition-all duration-300 hover:bg-[#444]/10 cursor-pointer z-10" type="button" onClick={() => fileInputRef.current.click()}>
+            <button className="absolute bottom-3 right-3 h-[26px] w-[26px] rounded-[2px] border-none bg-transparent text-primary-black text-[1.35rem] transition-all duration-300 hover:bg-[#444]/10 cursor-pointer z-10 sm:bottom-5 sm:right-5" type="button" onClick={() => fileInputRef.current.click()}>
               <i className='bx bxs-edit'></i>
             </button>
           </div>
@@ -130,12 +132,26 @@ const Profile = () => {
             <input className="w-full py-2 px-4 text-inherit bg-primary-white/60 rounded-md text-sm mt-[5px] transition-all duration-300 border-2 border-secondary-black cursor-not-allowed" type="email" id="email" value={email} disabled />
           </form>
 
-          <div className="flex justify-between p-1 border-2 border-dashed border-primary-black bg-primary-white mt-2">
-            <span>Member Since</span> <span>{createdAt}</span>
+          <div className="mt-2 flex flex-col gap-1 border-2 border-dashed border-primary-black bg-primary-white p-3 sm:flex-row sm:items-center sm:justify-between">
+            <span>Member Since</span>
+            <span>{createdAt}</span>
           </div>
 
-          <div className="flex justify-end mt-4">
-            <button className="w-[100px] bg-green text-inherit p-1.5 border-2 border-[#101010]/75 rounded-md font-semibold hover:ring-2 hover:ring-[#101010]/75 transition-all duration-300 cursor-pointer disabled:opacity-50" onClick={handleSaveChanges} disabled={loading}>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="group relative inline-flex min-w-[116px] items-center justify-center overflow-hidden bg-primary-white px-3 py-1.5 text-inherit border-2 border-[#101010]/75 rounded-md font-semibold transition-all duration-200 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 inline-flex -translate-x-3 opacity-0 transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100"
+              >
+                <i className="bx bx-left-arrow-alt text-[1.25rem] leading-none"></i>
+              </span>
+              <span className="mx-auto">Back</span>
+            </button>
+            <button className="min-w-[100px] bg-green text-inherit p-1.5 border-2 border-[#101010]/75 rounded-md font-semibold hover:ring-2 hover:ring-[#101010]/75 transition-all duration-300 cursor-pointer disabled:opacity-50" onClick={handleSaveChanges} disabled={loading}>
               {loading ? "Saving..." : "Save"}
             </button> 
           </div>

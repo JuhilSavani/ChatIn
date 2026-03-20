@@ -26,14 +26,14 @@ const Navbar = () => {
   };
   
   return (
-    <header className="fixed top-0 left-1/2 -translate-x-1/2 min-w-[880px] w-[calc(100vw-1rem)] px-10 my-2 z-10 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
-      <nav className="flex items-center justify-between h-[60px]">
+    <header className="fixed top-0 left-1/2 z-10 my-2 w-[calc(100vw-1rem)] max-w-6xl -translate-x-1/2 rounded-md border-2 border-[#101010]/75 border-b-[5px] bg-primary-white px-3 sm:px-6 lg:px-10">
+      <nav className="flex min-h-[60px] flex-col items-center justify-between gap-3 py-3 sm:h-[60px] sm:flex-row sm:gap-4 sm:py-0">
         <span className="text-md font-semibold text-center">
-          <Link className="flex flex-col items-center leading-tight">
+          <Link to="/" className="flex flex-col items-center leading-tight">
             <i className="bx bxs-message-alt-dots text-lg block"></i>ChatIn'
           </Link>
         </span>
-        <ul className="flex items-center gap-8 px-8">
+        <ul className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 sm:px-4 lg:gap-8 lg:px-8">
           <li className="text-sm">
             <NavLink 
               to="/about"
@@ -53,7 +53,7 @@ const Navbar = () => {
           <li className="text-sm">
             <button 
               onClick={logout}
-              className="text-sm text-inherit inline-flex items-center gap-2 py-[0.35rem] px-[0.6rem] rounded transition-all duration-300 ease-in-out border-2 border-[#101010]/75 bg-deem-red hover:ring-4 hover:ring-[#101010]/75 cursor-pointer"
+              className="text-sm text-inherit inline-flex items-center gap-2 py-[0.35rem] px-[0.6rem] rounded transition-all duration-300 ease-in-out border-2 border-[#101010]/75 bg-deem-red hover:ring-2 sm:hover:ring-4 hover:ring-[#101010]/75 cursor-pointer"
             >
               <i className="bx bxs-right-arrow-square text-lg"></i>{isLoading ? "Exiting" : "Logout"}
             </button>
