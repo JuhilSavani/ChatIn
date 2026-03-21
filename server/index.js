@@ -9,6 +9,7 @@ import connectionRoutes from "./routes/connection.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import profileRoutes from "./routes/profile.routes.js"
 import verificationRoutes from "./routes/verification.routes.js"
+import uploadRoutes from "./routes/upload.routes.js";
 import { app, server } from "./socket.js";
 import path from "path";
 
@@ -49,6 +50,7 @@ app.use("/api/connections", connectionRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/verify", verificationRoutes);
+app.use("/api/upload", uploadRoutes);
 
 if(isProduction){
   app.use(express.static(path.join(__dirname, "../client/dist")));

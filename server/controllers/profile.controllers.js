@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { cloudinaryStreamUpload } from "../config/cloudinary.config.js";
 import { User } from "../models/user.models.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -16,27 +15,20 @@ export const updateProfile = async (req, res) => {
     // Update name if provided
     if (req.body?.name) user.name = req.body.name;
 
-    // Upload profile picture if a new file is provided
-    if (req.file) {
-      try {
-        await cloudinaryStreamUpload(req.file.buffer, user.id);
-        user.hasProfilePic = true;
-      } catch (err) {
-        console.error("Cloudinary upload failed:", err, err?.message, err?.http_code);
-        return res.status(500).json({ message: "Profile updated but image upload failed." });
-      }
-      user.hasProfilePic = true;
-      user.updatedAt = new Date();
+    // Update profile picture URL instead of handling a file buffer natively
+    if (req.body?.profilePicUrl) {
+      user.profilePicUrl = req.body.profilePicUrl;
+      user.updatedAt = new Date(); // Hard refresh timestamp cache
     }
 
     await user.save();
 
-    // Construct payload including deterministic Cloudinary URL
+    // Construct payload
     const payload = {
       id: user.id,
       name: user.name,
       email: user.email,
-      hasProfilePic: user.hasProfilePic,
+      profilePicUrl: user.profilePicUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

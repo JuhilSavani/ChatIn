@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import useAuth from "../utils/hooks/useAuth";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
-import { getProfileImageUrl } from "../utils/profileImage";
+// Removed getProfileImageUrl
 
 const ChatPanel = ({ contact, onBack }) => {
   const { connectionId, connectedUser } = contact;
@@ -138,10 +138,10 @@ const ChatPanel = ({ contact, onBack }) => {
             </button>
           )}
           {onBack && <span aria-hidden="true" className="h-10 w-[3px] bg-primary-black ml-1 mr-2 lg:hidden"></span>}
-          {connectedUser.hasProfilePic ? (
+          {connectedUser.profilePicUrl ? (
             <img
               className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
-              src={getProfileImageUrl(connectedUser)}
+              src={connectedUser.profilePicUrl}
               alt={connectedUser.name}
             />
           ) : (

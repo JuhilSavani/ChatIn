@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../utils/hooks/useAuth";
 import axios from "../utils/apis/axios";
-import { getProfileImageUrl } from "../utils/profileImage";
+import { uploadMediaToCloudinary } from "../utils/actions/upload.actions";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -29,7 +29,7 @@ const Profile = () => {
       const timeFormatter = new Intl.DateTimeFormat("en-GB");
       setCreatedAt(timeFormatter.format(new Date(user.createdAt)));
       setImageError(false);
-      setProfilePicUrl(getProfileImageUrl(user));
+      setProfilePicUrl(user.profilePicUrl);
     }
   }, [user]);
 
@@ -57,19 +57,26 @@ const Profile = () => {
       user.name.replace(/\s+/g, "").toLowerCase() !== name.replace(/\s+/g, "").toLowerCase();
 
     try {
-      const formData = new FormData();
+      let finalProfilePicUrl = user.profilePicUrl;
 
-      if (isNameChanged) formData.append("name", name); 
-      if (profilePic) formData.append("profilePic", profilePic);
+      // Upload profile picture directly to Cloudinary if selected
+      if (profilePic) {
+        const cloudRes = await uploadMediaToCloudinary(profilePic);
+        finalProfilePicUrl = cloudRes.secure_url;
+      }
 
-      if (!formData.has("name") && !formData.has("profilePic")) { 
+      const payload = {};
+      if (isNameChanged) payload.name = name;
+      if (finalProfilePicUrl && finalProfilePicUrl !== user.profilePicUrl) {
+        payload.profilePicUrl = finalProfilePicUrl;
+      }
+
+      if (Object.keys(payload).length === 0) { 
         setLoading(false);
         return;
       }
 
-      const response = await axios.put(`/profile/${user.id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axios.put(`/profile/${user.id}`, payload);
 
       setUser(response.data?.user);
       setProfilePic(null);

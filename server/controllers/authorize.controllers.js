@@ -19,7 +19,7 @@ export const login = async (req, res) => {
         id: user.id, 
         name: user.name, 
         email: user.email, 
-        hasProfilePic: user.hasProfilePic,
+        profilePicUrl: user.profilePicUrl,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       }
@@ -71,7 +71,7 @@ export const register = async (req, res) => {
       id: newUser.id, 
       name: newUser.name, 
       email: newUser.email, 
-      hasProfilePic: newUser.hasProfilePic,
+      profilePicUrl: newUser.profilePicUrl,
       createdAt: newUser.createdAt,
       updatedAt: newUser.updatedAt,
     }
@@ -112,7 +112,7 @@ export const passwordlessLogin = async (req, res) =>{
       id: user.id, 
       name: user.name, 
       email: user.email, 
-      hasProfilePic: user.hasProfilePic,
+      profilePicUrl: user.profilePicUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }

@@ -25,10 +25,10 @@ export const User = sequelize.define(
       allowNull: false,
       unique: false,
     },
-    hasProfilePic: {  
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+    profilePicUrl: {  
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
     },
   },
   {

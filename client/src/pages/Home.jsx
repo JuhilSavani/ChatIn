@@ -8,7 +8,7 @@ import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
 import axios from "../utils/apis/axios";
-import { getProfileImageUrl } from "../utils/profileImage";
+// removed getProfileImageUrl
 
 const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
@@ -124,10 +124,10 @@ const Home = () => {
                   key={c.id || c.connectedUser.email} 
                   onClick={() => selectContact(c)}
                   className={`flex items-center gap-3 p-3 bg-primary-white rounded-md border-b border-primary-black/25 cursor-pointer transition-colors duration-200 hover:bg-secondary-white sm:gap-4 sm:p-4 ${(selectedContact?.connectedUser?.id === c?.connectedUser?.id) ? "!bg-secondary-white" : ""}`}>
-                    {c.connectedUser.hasProfilePic ? (
+                    {c.connectedUser.profilePicUrl ? (
                       <img
                         className="h-[45px] w-[45px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover sm:h-[49px] sm:w-[49px]"
-                        src={getProfileImageUrl(c.connectedUser)}
+                        src={c.connectedUser.profilePicUrl}
                         alt={c.connectedUser.name}
                       />
                     ) : (
@@ -146,10 +146,10 @@ const Home = () => {
           <div className="p-2 pt-0">
             <div className="flex items-center gap-3 p-3 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
               <div onClick={() => navigate("/profile")} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
-                {user.hasProfilePic ? (
+                {user.profilePicUrl ? (
                   <img
                     className="h-[38px] w-[38px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover"
-                    src={getProfileImageUrl(user)}
+                    src={user.profilePicUrl}
                     alt={user.name}
                   />
                 ) : (

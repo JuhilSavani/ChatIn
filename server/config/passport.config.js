@@ -12,7 +12,7 @@ export const configPassport = () => {
     new Strategy(jwtOptions, async (jwtPayload, callback) => {
       try {
         const user = await User.findByPk(jwtPayload.id, {
-          attributes: ["id", "name", "email", "hasProfilePic", "createdAt", "updatedAt"],
+          attributes: ["id", "name", "email", "profilePicUrl", "createdAt", "updatedAt"],
         });
         if (user) {
           return callback(null, user);
