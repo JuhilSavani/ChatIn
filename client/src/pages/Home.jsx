@@ -125,7 +125,7 @@ const Home = () => {
                   className={`flex items-center gap-3 p-3 bg-primary-white rounded-md border-b border-primary-black/25 cursor-pointer transition-colors duration-200 hover:bg-secondary-white sm:gap-4 sm:p-4 ${(selectedContact?.connectedUser?.id === c?.connectedUser?.id) ? "!bg-secondary-white" : ""}`}>
                     {c.connectedUser.hasProfilePic ? (
                       <img
-                        className="h-[45px] w-[45px] rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
+                        className="h-[45px] w-[45px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover sm:h-[49px] sm:w-[49px]"
                         src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${c.connectedUser.id}`}
                         alt={c.connectedUser.name}
                       />
@@ -147,7 +147,7 @@ const Home = () => {
               <div onClick={() => navigate("/profile")} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
                 {user.hasProfilePic ? (
                   <img
-                    className="w-[38px] h-[38px] rounded-full object-cover border-2 border-primary-black flex-shrink-0"
+                    className="h-[38px] w-[38px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover"
                     src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${user.id}`}
                     alt={user.name}
                   />
