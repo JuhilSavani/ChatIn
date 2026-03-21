@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from 'react-toastify';
 import axios from "../apis/axios";
 
 const addContact = () => {

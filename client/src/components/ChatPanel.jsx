@@ -8,15 +8,13 @@ const ChatPanel = ({ contact, onBack }) => {
   const { connectionId, connectedUser } = contact;
   const { user } = useAuth();
 
-  const [messages, setMessages] = useState({});
-  const [isSending, setIsSending] = useState(false);
+  const [pendingMessages, setPendingMessages] = useState([]);
   const [inputText, setInputText] = useState("");
-  const [optimisticMessage, setOptimisticMessage] = useState(null);
   const messageRef = useRef(null);
   const chatAreaRef = useRef(null);  
 
   const { data, isLoading, isError, error } = fetchMessages(connectionId);
-  const { mutate: sendMsg } = sendMessage();
+  const { mutateAsync: sendMsgAsync } = sendMessage();
 
   const timeFormatter = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
@@ -59,52 +57,78 @@ const ChatPanel = ({ contact, onBack }) => {
     );
   };
 
+  const buildMessageGroups = (messagesList) => messagesList.reduce((groupedMessages, msg) => {
+    const date = formatTimestamp(msg.timestamp);
+    if (!groupedMessages[date]) groupedMessages[date] = [];
+    groupedMessages[date].push(msg);
+    return groupedMessages;
+  }, {});
+
+  const createPendingMessage = (content) => ({
+    id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    content,
+    timestamp: new Date().toISOString(),
+    sender: { id: user.id },
+    isPending: true,
+  });
+
+  const displayedMessages = [...(Array.isArray(data) ? data : []), ...pendingMessages]
+    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+  const groupedMessages = buildMessageGroups(displayedMessages);
+
   useEffect(() => {
-    if(data && data.length){
-      const groupedMessages = {};
+    setPendingMessages([]);
+    setInputText("");
 
-      data.forEach((msg) => {
-        const date = formatTimestamp(msg.timestamp);
-        if(!groupedMessages[date]) groupedMessages[date] = [];
-        groupedMessages[date].push(msg);
-      });
-
-      setMessages(groupedMessages);
-    }else setMessages({});
-  }, [data]);
+    if (messageRef.current) {
+      messageRef.current.style.height = "auto";
+    }
+  }, [connectionId]);
 
   // Scroll down to the bottom on message state update
   useEffect(() => {
     chatAreaRef.current 
     && (chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight);
-  }, [messages, optimisticMessage]);
+  }, [data, pendingMessages]);
 
   const handleSendMessage = () => {
     const messageContent = inputText.trim();
-    if (!messageContent || isSending) return;
-    const data = {
+    if (!messageContent) return;
+
+    const pendingMessage = createPendingMessage(messageContent);
+    const messageData = {
       connectionId,
       senderId: user.id,
       recieverId: connectedUser.id,
       content: messageContent,
     };
-    setIsSending(true);
-    setOptimisticMessage(messageContent);
+
+    setPendingMessages((currentMessages) => [...currentMessages, pendingMessage]);
     setInputText("");
     if (messageRef.current) {
       messageRef.current.style.height = "auto";
     }
     
-    sendMsg(data, {
-      onSuccess: () => {
-        setIsSending(false);
-        setOptimisticMessage(null);
-      },
-      onError: () => {
-        setIsSending(false);
-        setOptimisticMessage(null);
-      },
-    });
+    void sendMsgAsync(messageData)
+      .then(() => {
+        setPendingMessages((currentMessages) =>
+          currentMessages.filter((message) => message.id !== pendingMessage.id)
+        );
+      })
+      .catch(() => {
+        setPendingMessages((currentMessages) =>
+          currentMessages.filter((message) => message.id !== pendingMessage.id)
+        );
+        setInputText((currentInput) => currentInput.trim() ? currentInput : messageContent);
+
+        requestAnimationFrame(() => {
+          if (messageRef.current) {
+            messageRef.current.style.height = "auto";
+            messageRef.current.style.height = `${messageRef.current.scrollHeight}px`;
+          }
+        });
+      });
   };
 
   const handleKeyDown = (e) => {
@@ -152,29 +176,28 @@ const ChatPanel = ({ contact, onBack }) => {
       <section className="flex-1 w-full min-h-0 overflow-y-auto px-2 sm:px-3" ref={chatAreaRef}>
         {isLoading && <p className="block border-2 border-dashed border-primary-black p-4 text-center my-4 mx-auto w-[92%] sm:w-[80%]"><strong>Loading messages...</strong></p>}
         {isError && <p className="block border-2 border-dashed border-primary-black p-4 text-center my-4 mx-auto w-[92%] sm:w-[80%]"><strong>Error: </strong>{error.message}</p>}
-        {!isLoading && !isError && !Boolean(data?.length) && <p className="block border-2 border-dashed border-primary-black p-4 text-center my-4 mx-auto w-[92%] sm:w-[80%]"><strong>No messages yet!</strong></p>}
-        {!isLoading && !isError && Boolean(data?.length) &&
-          Object.keys(messages).map((date, index) => (
-            <div key={date} className={index !== Object.keys(messages).length - 1 ? "pb-2 border-b border-primary-black" : ""}>
+        {!isLoading && !isError && !Boolean(displayedMessages.length) && <p className="block border-2 border-dashed border-primary-black p-4 text-center my-4 mx-auto w-[92%] sm:w-[80%]"><strong>No messages yet!</strong></p>}
+        {!isLoading && !isError && Boolean(displayedMessages.length) &&
+          Object.entries(groupedMessages).map(([date, groupedDateMessages], index, groupedEntries) => (
+            <div key={date} className={index !== groupedEntries.length - 1 ? "pb-2 border-b border-primary-black" : ""}>
               <span className="bg-bisque border-2 border-[#101010]/75 p-2 rounded block my-4 mx-auto text-center w-fit min-w-[120px] sm:min-w-[150px]">{date}</span>
-              {messages[date].map((msg) => (
+              {groupedDateMessages.map((msg) => (
                 <div key={msg.id} className={`flex flex-col my-2 ${msg.sender.id === user.id ? "items-end" : "items-start"}`}>
                   <p className={`flex flex-col border-2 border-[#101010]/75 px-2 pt-2 pb-[2px] max-w-[85%] sm:max-w-[72%] lg:max-w-[45%] ${msg.sender.id === user.id ? "bg-green items-end rounded-[6px_0_6px_6px]" : "bg-beige items-start rounded-[0_6px_6px_6px]"}`}>
                     <span className="break-words min-w-0 w-full block text-[0.95rem]">{msg.content}</span>
-                    <span className="mt-1 bg-primary-white text-[0.65rem] p-[2px] rounded-[3px] border border-primary-black/25 leading-none">{timeFormatter.format(new Date(msg.timestamp))}</span>
+                    {msg.isPending ? (
+                      <span className="chatin-loading-badge">
+                        <i className="bx bx-loader-alt chatin-loading-spinner text-[0.9rem]"></i>
+                        Sending...
+                      </span>
+                    ) : (
+                      <span className="mt-1 bg-primary-white text-[0.65rem] p-[2px] rounded-[3px] border border-primary-black/25 leading-none">{timeFormatter.format(new Date(msg.timestamp))}</span>
+                    )}
                   </p>
                 </div>
               ))}
             </div>
         ))}
-        {optimisticMessage && (
-          <div className="flex flex-col my-2 items-end opacity-70">
-            <p className="flex flex-col border-2 border-[#101010]/75 px-2 pt-2 pb-[2px] max-w-[85%] sm:max-w-[72%] lg:max-w-[45%] bg-green items-end rounded-[6px_0_6px_6px]">
-              <span className="break-words min-w-0 w-full block text-[0.95rem]">{optimisticMessage}</span>
-              <span className="mt-1 bg-primary-white text-[0.65rem] p-[2px] rounded-[3px] border border-primary-black/25 leading-none px-1">Sending...</span>
-            </p>
-          </div>
-        )}
       </section>
       <section className="flex-shrink-0 w-full bg-secondary-white p-3 sm:p-4 flex items-end gap-2 sm:gap-3 border-t border-primary-black/25 rounded-b-[min(1rem,2vw)]">
         <div className="flex-1 bg-primary-white border-2 border-[#101010]/75 rounded-md focus-within:ring-[3px] focus-within:ring-[#101010]/75 transition-all duration-300 overflow-hidden">
@@ -192,7 +215,7 @@ const ChatPanel = ({ contact, onBack }) => {
             className="block px-4 py-[0.7rem] text-inherit bg-transparent outline-none border-none text-[0.95rem] placeholder:opacity-80 w-full resize-none min-h-[46px] max-h-[140px] leading-relaxed"
           />
         </div>
-        <button onClick={handleSendMessage} disabled={isSending || !inputText.trim()} className={`mb-px flex-shrink-0 inline-flex h-[50px] w-[50px] items-center justify-center text-[1.5rem] rounded-md border-2 transition-all duration-200 sm:h-[51.6px] sm:w-[51.6px] ${inputText.trim() && !isSending ? "bg-primary-black border-primary-black text-primary-white hover:bg-secondary-black active:scale-[0.95] cursor-pointer" : "bg-primary-black/10 border-transparent text-primary-black/50 cursor-not-allowed"}`} >
+        <button onClick={handleSendMessage} disabled={!inputText.trim()} className={`mb-px flex-shrink-0 inline-flex h-[50px] w-[50px] items-center justify-center text-[1.5rem] rounded-md border-2 transition-all duration-200 sm:h-[51.6px] sm:w-[51.6px] ${inputText.trim() ? "bg-primary-black border-primary-black text-primary-white hover:bg-secondary-black active:scale-[0.95] cursor-pointer" : "bg-primary-black/10 border-transparent text-primary-black/50 cursor-not-allowed"}`} >
           <i className="bx bx-up-arrow-alt"></i>
         </button>
       </section>

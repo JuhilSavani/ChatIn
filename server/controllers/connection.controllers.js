@@ -98,9 +98,9 @@ export const createConnection = async (req, res) => {
       if (existingConnection.status == "blocked")
         return res.status(400).json({ message: "You are blocked by this contact." });
       else if (existingConnection.status == "accepted")
-        return res.status(400).json({ message: "Already exists." });
+        return res.status(400).json({ message: "You are already connected with this contact." });
       else if (existingConnection.user1.id == userId)
-        return res.status(400).json({ message: "Already exists." });
+        return res.status(400).json({ message: "This contact is already in your list." });
       else {
         existingConnection.status = "accepted";
         await existingConnection.save();

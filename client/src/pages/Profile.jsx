@@ -208,13 +208,13 @@ const Profile = () => {
             <button
               type="button"
               onClick={handleBack}
-              className="group relative inline-flex min-w-[116px] items-center justify-center overflow-hidden bg-primary-white px-3 py-1.5 text-inherit border-2 border-[#101010]/75 rounded-md font-semibold transition-all duration-200 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+              className="group relative inline-flex min-w-[90px] items-center justify-center overflow-hidden bg-primary-white px-3 py-1.5 text-inherit border-2 border-[#101010]/75 rounded-md font-semibold transition-all duration-200 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
             >
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 inline-flex -translate-x-3 opacity-0 transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100"
+                className="pointer-events-none absolute left-1 inline-flex -translate-x-3 opacity-0 transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100"
               >
-                <i className="bx bx-left-arrow-alt text-[1.25rem] leading-none"></i>
+                <i className="bx bx-chevron-left text-[1.5rem] leading-none"></i>
               </span>
               <span className="mx-auto">Back</span>
             </button>

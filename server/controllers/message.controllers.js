@@ -5,11 +5,14 @@ import { Op } from "sequelize";
 import { getSocketId, io } from "../socket.js";
 import { computedConnection } from "./connection.controllers.js";
 
+// const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// const MESSAGE_SEND_TEST_DELAY_MS = 3000;
+
 export const getMessages = async (req, res) => {
   const { connectionId } = req.params;
 
   try {
-    const connection = await Connection.findByPk(connectionId, {
+    const connection = await Connection.fin~dByPk(connectionId, {
       where: { status: { [Op.ne]: "blocked" } },
     });
     if (!connection)
@@ -50,6 +53,9 @@ export const sendMessage = async (req, res) => {
         message: "connectionId, senderId, recieverId and content are required.",
       });
 
+    // Temporary latency to test pending message UI.
+    // await sleep(MESSAGE_SEND_TEST_DELAY_MS);
+
     const connection = await Connection.findByPk(connectionId, {
       where: { status: { [Op.ne]: "blocked" } },
       attributes: ["id", "status"],
@@ -83,6 +89,7 @@ export const sendMessage = async (req, res) => {
 
     const newMessage = { 
       id: message.id,
+      connectionId: message.connectionId,
       content: message.content,
       timestamp: message.timestamp,
       sender: { 

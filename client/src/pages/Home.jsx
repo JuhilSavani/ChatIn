@@ -30,6 +30,9 @@ const Home = () => {
 
   const { mutate: addContactMutate } = addContact();
 
+  const getAddContactErrorMessage = (email, err) =>
+    err?.response?.data?.message || `Something went wrong while adding ${email}, 😶!`;
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
     closeLogoutDialog();
@@ -97,7 +100,7 @@ const Home = () => {
         setIsAdding(false);
         closeConfirmDialog();
         console.error(err?.response?.data?.stack || err.stack);
-        toast.error(`Something went wrong while adding ${confirmingContact}, 😶!`);
+        toast.error(getAddContactErrorMessage(confirmingContact, err));
       },
     });
   };
@@ -124,7 +127,7 @@ const Home = () => {
         setIsAdding(false);
         closeDialog();
         console.error(err?.response?.data?.stack || err.stack);
-        toast.error(`Something went wrong while adding ${email}, 😶!`);
+        toast.error(getAddContactErrorMessage(email, err));
       },
     });
   };
@@ -244,15 +247,22 @@ const Home = () => {
                 />
               </label>
               <div className="flex justify-center gap-4 mt-6">
-                <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold h-[45px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeDialog}>
+                <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold h-[45px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeDialog} disabled={isAdding}>
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-green text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold h-[45px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+                  className="bg-green text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold h-[45px] min-w-[140px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={isAdding}
                 >
-                  {isAdding ? <i className="bx bx-loader text-[1.875rem]"></i> : <><i className="bx bxs-check-circle text-[1.875rem] mr-2 hidden"></i>Add</>}
+                  {isAdding ? (
+                    <span className="chatin-loading-indicator">
+                      <i className="bx bx-loader-alt chatin-loading-spinner text-[1.35rem]"></i>
+                      Adding...
+                    </span>
+                  ) : (
+                    "Add"
+                  )}
                 </button>
               </div>
             </form>
@@ -284,16 +294,23 @@ const Home = () => {
               Do you want to add <strong>{confirmingContact}</strong> to your contacts?
             </p>
             <div className="flex justify-center gap-4">
-              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeConfirmDialog}>
+              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeConfirmDialog} disabled={isAdding}>
                 Cancel
               </button>
               <button
                 type="button"
-                className="bg-green text-primary-black text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60"
+                className="bg-green text-primary-black text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold min-w-[140px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={handleConfirmAdd}
                 disabled={isAdding}
               >
-                {isAdding ? "Connecting..." : "Add"}
+                {isAdding ? (
+                  <span className="chatin-loading-indicator">
+                    <i className="bx bx-loader-alt chatin-loading-spinner text-[1.35rem]"></i>
+                    Adding...
+                  </span>
+                ) : (
+                  "Add"
+                )}
               </button>
             </div>
           </div>
