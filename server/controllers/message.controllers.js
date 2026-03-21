@@ -12,7 +12,7 @@ export const getMessages = async (req, res) => {
   const { connectionId } = req.params;
 
   try {
-    const connection = await Connection.fin~dByPk(connectionId, {
+    const connection = await Connection.findByPk(connectionId, {
       where: { status: { [Op.ne]: "blocked" } },
     });
     if (!connection)
