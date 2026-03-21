@@ -108,15 +108,20 @@ const ChatPanel = ({ contact, onBack }) => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Check if the user is on a mobile device
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    // On desktop, Enter sends the message (without shift).
+    // On mobile, Enter creates a new line since shift is not typically used.
+    if (e.key === "Enter" && !e.shiftKey && !isMobile) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
   return (
-    <div className="flex flex-col h-full min-h-0 w-full bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
-      <section className="w-full bg-secondary-white p-3 sm:p-4 flex items-center gap-3 sm:gap-4 rounded-t-[4px] border-b border-primary-black/25">
+    <div className="flex flex-col flex-1 h-full min-h-0 w-full bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+      <section className="flex-shrink-0 w-full bg-secondary-white p-3 sm:p-4 flex items-center gap-3 sm:gap-4 rounded-t-[4px] border-b border-primary-black/25">
         <div className="flex items-center gap-0.5 sm:gap-1">
           {onBack && (
             <button

@@ -87,7 +87,7 @@ const Home = () => {
   );
 
   return (
-    <div className="grid h-full min-h-0 w-full grid-cols-1 bg-beige lg:grid-cols-[minmax(18rem,3fr)_minmax(0,7fr)] lg:overflow-hidden lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px]">
+    <div className="grid h-full min-h-0 w-full grid-cols-1 grid-rows-1 overflow-hidden bg-beige lg:grid-cols-[minmax(18rem,3fr)_minmax(0,7fr)] lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px]">
         <section className={`min-h-0 flex-col overflow-hidden ${selectedContact?.status ? "hidden lg:flex" : "flex"} lg:border-r-2 lg:border-r-[#101010]/75`}>
           <div className="relative m-2 mb-0 flex items-center justify-between overflow-hidden rounded-md border-2 border-[#101010]/75 border-b-[5px] px-3 py-3 sm:px-4">
             <span className="inline-flex items-center gap-2 text-base sm:text-lg">
