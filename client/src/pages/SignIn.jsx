@@ -17,6 +17,7 @@ const SignIn = () => {
   const [isForgotPwdLoading, setIsForgotPwdLoading] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (event) =>{
     event.preventDefault();
@@ -97,14 +98,24 @@ const SignIn = () => {
               required
             />
             <label htmlFor="password" className="ml-1 mt-3 mb-1.5 block text-md sm:mt-4 sm:mb-2">Password: </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password here..."
-              className="block w-full py-3 px-4 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                placeholder="Enter your password here..."
+                className="block w-full py-3 px-4 pr-10 text-inherit bg-primary-white border-2 border-secondary-black rounded-md text-sm transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-black text-[1.4rem] opacity-70 transition-opacity hover:opacity-100 p-1 flex items-center justify-center cursor-pointer bg-transparent border-none"
+                tabIndex="-1"
+              >
+                {showPassword ? <i className='bx bx-hide'></i> : <i className='bx bx-show'></i>}
+              </button>
+            </div>
             <span  className={clsx('mx-2 mt-2 block text-sm font-[450] hover:cursor-pointer hover:underline', isForgotPwdLoading && 'opacity-80 hover:!cursor-progress')} onClick={handleForgotPwd}>
               forgot password?
             </span>
