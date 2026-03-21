@@ -13,6 +13,7 @@ export const computedConnection = (userId, connection) => {
       name: connectedUser.name,
       email: connectedUser.email,
       hasProfilePic: connectedUser.hasProfilePic,
+      updatedAt: connectedUser.updatedAt,
     },
   };
 };
@@ -43,8 +44,8 @@ export const getConnections = async (req, res) => {
       },
       attributes: ["id", "status"],
       include: [
-        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic"] },
-        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic"] }, 
+        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic", "updatedAt"] },
+        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic", "updatedAt"] }, 
       ],
     });
 
@@ -88,8 +89,8 @@ export const createConnection = async (req, res) => {
       },
       attributes: ["id", "status"],
       include: [
-        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic"] },
-        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic"] }, 
+        { model: User, as: "user1", attributes: ["id", "name", "email", "hasProfilePic", "updatedAt"] },
+        { model: User, as: "user2", attributes: ["id", "name", "email", "hasProfilePic", "updatedAt"] }, 
       ],
     });
 
@@ -116,6 +117,7 @@ export const createConnection = async (req, res) => {
         name: user2.name,
         email: user2.email,
         hasProfilePic: user2.hasProfilePic,
+        updatedAt: user2.updatedAt,
       },
     };
     return res.status(201).json(result);

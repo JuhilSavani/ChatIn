@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../utils/hooks/useAuth";
 import axios from "../utils/apis/axios";
+import { getProfileImageUrl } from "../utils/profileImage";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -27,8 +28,8 @@ const Profile = () => {
       setEmail(user.email);
       const timeFormatter = new Intl.DateTimeFormat("en-GB");
       setCreatedAt(timeFormatter.format(new Date(user.createdAt)));
-      if (user.hasProfilePic) 
-        setProfilePicUrl(`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/profilePics/user_${user.id}`);
+      setImageError(false);
+      setProfilePicUrl(getProfileImageUrl(user));
     }
   }, [user]);
 
@@ -41,6 +42,7 @@ const Profile = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageError(false);
       setProfilePic(file);
       setProfilePicUrl(URL.createObjectURL(file));
     }
@@ -70,6 +72,7 @@ const Profile = () => {
       });
 
       setUser(response.data?.user);
+      setProfilePic(null);
       setMessage({ type: "success", text: response.data?.message });
       setIsEditing(false);
 
@@ -84,9 +87,9 @@ const Profile = () => {
 
   return (
     <div className="grid h-full w-full place-items-center overflow-auto py-4 sm:py-6">
-      <div className="flex w-full max-w-[42rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-12">
+      <div className="flex w-full max-w-[36rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-8">
         <section className="flex flex-col font-semibold text-center profile-pic">
-          <h2 className="mb-2 text-[2rem] sm:text-xl">Your Profile</h2>
+          <h2 className="text-[2rem] sm:text-xl">Your Profile</h2>
           <div className="relative mx-auto flex h-[200px] w-[200px] items-center justify-center sm:h-[256px] sm:w-[256px]">
             {profilePicUrl && !imageError ? (
               <img className="block h-[180px] w-[180px] rounded-full object-cover border-[3px] border-primary-black sm:h-[232px] sm:w-[232px]" src={profilePicUrl} alt="Profile" onError={() => setImageError(true)} />
@@ -132,7 +135,7 @@ const Profile = () => {
             <input className="w-full py-2 px-4 text-inherit bg-primary-white/60 rounded-md text-sm mt-[5px] transition-all duration-300 border-2 border-secondary-black cursor-not-allowed" type="email" id="email" value={email} disabled />
           </form>
 
-          <div className="mt-2 flex flex-col gap-1 border-2 border-dashed border-primary-black bg-primary-white p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 border-2 border-dashed border-primary-black bg-primary-white p-2 sm:flex-row sm:items-center sm:justify-between">
             <span>Member Since</span>
             <span>{createdAt}</span>
           </div>

@@ -8,6 +8,7 @@ import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
 import axios from "../utils/apis/axios";
+import { getProfileImageUrl } from "../utils/profileImage";
 
 const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
@@ -126,7 +127,7 @@ const Home = () => {
                     {c.connectedUser.hasProfilePic ? (
                       <img
                         className="h-[45px] w-[45px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover sm:h-[49px] sm:w-[49px]"
-                        src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${c.connectedUser.id}`}
+                        src={getProfileImageUrl(c.connectedUser)}
                         alt={c.connectedUser.name}
                       />
                     ) : (
@@ -148,7 +149,7 @@ const Home = () => {
                 {user.hasProfilePic ? (
                   <img
                     className="h-[38px] w-[38px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover"
-                    src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${user.id}`}
+                    src={getProfileImageUrl(user)}
                     alt={user.name}
                   />
                 ) : (

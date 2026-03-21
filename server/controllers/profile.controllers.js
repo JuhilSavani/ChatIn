@@ -26,6 +26,7 @@ export const updateProfile = async (req, res) => {
         return res.status(500).json({ message: "Profile updated but image upload failed." });
       }
       user.hasProfilePic = true;
+      user.updatedAt = new Date();
     }
 
     await user.save();
@@ -37,6 +38,7 @@ export const updateProfile = async (req, res) => {
       email: user.email,
       hasProfilePic: user.hasProfilePic,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
 
     // Create JWT and set cookie

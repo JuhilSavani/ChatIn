@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import useAuth from "../utils/hooks/useAuth";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
+import { getProfileImageUrl } from "../utils/profileImage";
 
 const ChatPanel = ({ contact, onBack }) => {
   const { connectionId, connectedUser } = contact;
@@ -140,7 +141,7 @@ const ChatPanel = ({ contact, onBack }) => {
           {connectedUser.hasProfilePic ? (
             <img
               className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
-              src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/profilePics/user_${connectedUser.id}`}
+              src={getProfileImageUrl(connectedUser)}
               alt={connectedUser.name}
             />
           ) : (

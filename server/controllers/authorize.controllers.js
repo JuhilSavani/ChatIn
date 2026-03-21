@@ -20,7 +20,8 @@ export const login = async (req, res) => {
         name: user.name, 
         email: user.email, 
         hasProfilePic: user.hasProfilePic,
-        createdAt: user.createdAt 
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       }
 
       const token = jwt.sign(
@@ -71,7 +72,8 @@ export const register = async (req, res) => {
       name: newUser.name, 
       email: newUser.email, 
       hasProfilePic: newUser.hasProfilePic,
-      createdAt: newUser.createdAt 
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
     }
 
     const token = jwt.sign(
@@ -111,7 +113,8 @@ export const passwordlessLogin = async (req, res) =>{
       name: user.name, 
       email: user.email, 
       hasProfilePic: user.hasProfilePic,
-      createdAt: user.createdAt 
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     }
 
     const token = jwt.sign(
@@ -147,4 +150,3 @@ export const logout = (req, res) => {
 
   return res.sendStatus(200);
 };
-

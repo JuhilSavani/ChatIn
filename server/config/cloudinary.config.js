@@ -15,6 +15,7 @@ export const cloudinaryStreamUpload = (fileBuffer, userId) => {
         folder: "profilePics",
         public_id: `user_${userId}`,
         overwrite: true,
+        invalidate: true,
         transformation: [
           { fetch_format: "auto", quality: "auto" } 
         ],
