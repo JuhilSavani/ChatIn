@@ -17,6 +17,7 @@ const Home = () => {
   const navigate = useNavigate();
   
   const dialogRef = useRef(null);
+  const logoutDialogRef = useRef(null);
 
   const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
@@ -28,6 +29,7 @@ const Home = () => {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    closeLogoutDialog();
     try {
       await axios.post('/authorize/logout');
       setIsAuthenticated(false);
@@ -43,6 +45,9 @@ const Home = () => {
 
   const openDialog = () => dialogRef.current?.showModal();
   const closeDialog = () => dialogRef.current?.close();
+
+  const openLogoutDialog = () => logoutDialogRef.current?.showModal();
+  const closeLogoutDialog = () => logoutDialogRef.current?.close();
 
   useEffect(() => {
     if (data && data.length) setContacts(data);
@@ -160,18 +165,22 @@ const Home = () => {
                   <p className="text-xs leading-tight whitespace-nowrap overflow-hidden text-ellipsis opacity-70">{user.email}</p>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                title="Logout"
-                className="flex-shrink-0 inline-flex items-center justify-center p-1 rounded-md border-2 border-[#101010]/75 bg-deem-red transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60"
-              >
-                <i className="bx bxs-right-arrow-square text-lg"></i>
-              </button>
+              <div className="relative group flex items-center justify-center">
+                <button
+                  onClick={openLogoutDialog}
+                  disabled={isLoggingOut}
+                  className="flex-shrink-0 inline-flex items-center justify-center h-[32px] w-[32px] rounded-md border-none bg-transparent text-primary-black transition-all duration-300 hover:bg-[#F75A5A]/20 hover:text-[#F75A5A] cursor-pointer disabled:opacity-60"
+                >
+                  <i className='bx bx-arrow-to-right text-[1.8rem]' ></i>
+                </button>
+                <span className="pointer-events-none absolute -top-[34px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[4px] border-2 border-[#101010]/75 bg-primary-black px-2 py-1 text-[0.7rem] font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  Logout
+                </span>
+              </div>
             </div>
           </div>
         </section>
-        <dialog ref={dialogRef} className="absolute top-1/2 left-1/2 w-[min(400px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+        <dialog ref={dialogRef} className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
           <div className="p-5 sm:p-8">
             <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Add Contact</h3>
             <form onSubmit={handleAdd}>
@@ -198,6 +207,25 @@ const Home = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </dialog>
+        <dialog ref={logoutDialogRef} className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+          <div className="p-5 sm:p-8">
+            <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Logout</h3>
+            <p className="text-sm font-medium mb-6">Are you sure you want to log out of ChatIn?</p>
+            <div className="flex justify-center gap-4">
+              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeLogoutDialog}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </div>
           </div>
         </dialog>
         <section className={`min-h-0 flex-col overflow-hidden p-2 ${selectedContact?.status ? "flex" : "hidden lg:flex"}`}>

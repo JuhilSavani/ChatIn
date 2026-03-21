@@ -18,9 +18,18 @@ const Profile = () => {
   const [message, setMessage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isProfilePicRemoved, setIsProfilePicRemoved] = useState(false);
 
   const fileInputRef = useRef(null);
   const nameInputRef = useRef(null);
+  const deleteDialogRef = useRef(null);
+  const unsavedDialogRef = useRef(null);
+
+  const openDeleteDialog = () => deleteDialogRef.current?.showModal();
+  const closeDeleteDialog = () => deleteDialogRef.current?.close();
+
+  const openUnsavedDialog = () => unsavedDialogRef.current?.showModal();
+  const closeUnsavedDialog = () => unsavedDialogRef.current?.close();
 
   useEffect(() => {
     if (user) {
@@ -43,6 +52,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       setImageError(false);
+      setIsProfilePicRemoved(false);
       setProfilePic(file);
       setProfilePicUrl(URL.createObjectURL(file));
     }
@@ -63,11 +73,13 @@ const Profile = () => {
       if (profilePic) {
         const cloudRes = await uploadMediaToCloudinary(profilePic);
         finalProfilePicUrl = cloudRes.secure_url;
+      } else if (isProfilePicRemoved) {
+        finalProfilePicUrl = null;
       }
 
       const payload = {};
       if (isNameChanged) payload.name = name;
-      if (finalProfilePicUrl && finalProfilePicUrl !== user.profilePicUrl) {
+      if (finalProfilePicUrl !== user.profilePicUrl) {
         payload.profilePicUrl = finalProfilePicUrl;
       }
 
@@ -92,6 +104,36 @@ const Profile = () => {
     }
   };
 
+  const handleRemovePicture = async () => {
+    setLoading(true);
+    closeDeleteDialog();
+    try {
+      const payload = { profilePicUrl: null };
+      const response = await axios.put(`/profile/${user.id}`, payload);
+      
+      setUser(response.data?.user);
+      setProfilePic(null);
+      setProfilePicUrl("");
+      setIsProfilePicRemoved(false);
+      setImageError(false);
+      setMessage({ type: "success", text: "Profile picture removed successfully" });
+    } catch (err) {
+      console.error(err.stack);
+      setMessage({ type: "error", text: "Failed to remove profile picture." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    const isNameChanged = user.name.replace(/\s+/g, "").toLowerCase() !== name.replace(/\s+/g, "").toLowerCase();
+    if (isNameChanged || profilePic) {
+      openUnsavedDialog();
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <div className="grid h-full w-full place-items-center overflow-auto px-4 py-4 sm:px-6 sm:py-6">
       <div className="flex w-full max-w-[36rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-8">
@@ -112,6 +154,16 @@ const Profile = () => {
             <button className="absolute bottom-3 right-3 h-[26px] w-[26px] rounded-[2px] border-none bg-transparent text-primary-black text-[1.35rem] transition-all duration-300 hover:bg-[#444]/10 cursor-pointer z-10 sm:bottom-5 sm:right-5" type="button" onClick={() => fileInputRef.current.click()}>
               <i className='bx bxs-edit'></i>
             </button>
+            {profilePicUrl && !imageError && (
+              <button 
+                className="absolute bottom-3 left-3 h-[26px] w-[26px] rounded-[2px] border-none bg-transparent text-primary-black text-[1.35rem] transition-all duration-300 hover:bg-[#444]/10 cursor-pointer z-10 sm:bottom-5 sm:left-5 inline-flex items-center justify-center p-0" 
+                type="button" 
+                title="Remove Picture"
+                onClick={openDeleteDialog}
+              >
+                <i className='bx bxs-trash'></i>
+              </button>
+            )}
           </div>
         </section>
 
@@ -150,7 +202,7 @@ const Profile = () => {
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <button
               type="button"
-              onClick={() => navigate("/")}
+              onClick={handleBack}
               className="group relative inline-flex min-w-[116px] items-center justify-center overflow-hidden bg-primary-white px-3 py-1.5 text-inherit border-2 border-[#101010]/75 rounded-md font-semibold transition-all duration-200 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
             >
               <span
@@ -167,12 +219,51 @@ const Profile = () => {
           </div>
 
            {message && (
-            <p className={`px-1 mt-2 ${message.type === "success" ? "bg-green text-primary-black" : "bg-[#F75A5A] text-white"}`}>
+            <p className={`px-1 mt-2 text-center py-2 border-2 border-[#101010]/75 rounded-md font-semibold ${message.type === "success" ? "bg-green text-primary-black" : "bg-[#F75A5A] text-white"}`}>
               {message.text}
             </p>
           )}
         </section>
       </div>
+
+      <dialog ref={deleteDialogRef} className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+        <div className="p-5 sm:p-8">
+          <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Remove Picture</h3>
+          <p className="text-sm font-medium mb-6">Are you sure you want to remove your profile picture?</p>
+          <div className="flex justify-center gap-4">
+            <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeDeleteDialog}>
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60"
+              onClick={handleRemovePicture}
+              disabled={loading}
+            >
+              {loading ? "Removing..." : "Remove"}
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog ref={unsavedDialogRef} className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+        <div className="p-5 sm:p-8">
+          <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Unsaved Changes</h3>
+          <p className="text-sm font-medium mb-6">You have unsaved changes. Please press the <strong>Save</strong> button to apply them before leaving!</p>
+          <div className="flex justify-center gap-4">
+            <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeUnsavedDialog}>
+              Stay
+            </button>
+            <button
+              type="button"
+              className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              Leave Anyway
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

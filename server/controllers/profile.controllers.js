@@ -16,7 +16,7 @@ export const updateProfile = async (req, res) => {
     if (req.body?.name) user.name = req.body.name;
 
     // Update profile picture URL instead of handling a file buffer natively
-    if (req.body?.profilePicUrl) {
+    if ("profilePicUrl" in req.body) {
       user.profilePicUrl = req.body.profilePicUrl;
       user.updatedAt = new Date(); // Hard refresh timestamp cache
     }

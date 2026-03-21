@@ -125,16 +125,7 @@ const ChatPanel = ({ contact, onBack }) => {
               aria-label="Back to contacts"
               className="inline-flex items-center justify-center p-0 text-primary-black/70 transition-all duration-200 hover:-translate-x-0.5 hover:text-primary-black focus:outline-none active:-translate-x-1 lg:hidden"
             >
-              <svg
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width={36}
-                height={36}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M14.29 6.29 8.59 12l5.7 5.71 1.42-1.42-4.3-4.29 4.3-4.29z"></path>
-              </svg>
+              <i className="bx bxs-chevron-left text-[1.875rem]"></i>
             </button>
           )}
           {onBack && <span aria-hidden="true" className="h-10 w-[3px] bg-primary-black ml-1 mr-2 lg:hidden"></span>}
