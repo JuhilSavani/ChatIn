@@ -86,7 +86,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="grid h-full w-full place-items-center overflow-auto py-4 sm:py-6">
+    <div className="grid h-full w-full place-items-center overflow-auto px-4 py-4 sm:px-6 sm:py-6">
       <div className="flex w-full max-w-[36rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-8">
         <section className="flex flex-col font-semibold text-center profile-pic">
           <h2 className="text-[2rem] sm:text-xl">Your Profile</h2>
@@ -135,9 +135,9 @@ const Profile = () => {
             <input className="w-full py-2 px-4 text-inherit bg-primary-white/60 rounded-md text-sm mt-[5px] transition-all duration-300 border-2 border-secondary-black cursor-not-allowed" type="email" id="email" value={email} disabled />
           </form>
 
-          <div className="flex flex-col gap-1 border-2 border-dashed border-primary-black bg-primary-white p-2 sm:flex-row sm:items-center sm:justify-between">
-            <span>Member Since</span>
-            <span>{createdAt}</span>
+          <div className="flex items-center justify-between border-2 border-dashed border-primary-black bg-primary-white p-2 sm:px-4 sm:py-2 rounded-md mt-1">
+            <span className="font-semibold text-sm ml-1">Member Since:</span>
+            <span className="text-sm mr-1">{createdAt}</span>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
