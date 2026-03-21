@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
@@ -14,16 +14,19 @@ const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
 
   const { user, setIsAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  
   const dialogRef = useRef(null);
   const logoutDialogRef = useRef(null);
+  const confirmDialogRef = useRef(null);
 
   const [contacts, setContacts] = useState([]);
   const [selectedContact, selectContact] = useState({});
   const [isAdding, setIsAdding] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [search, setSearch] = useState(""); 
+  const [confirmingContact, setConfirmingContact] = useState("");
+
+  const location = useLocation(); 
+  const navigate = useNavigate();
 
   const { mutate: addContactMutate } = addContact();
 
@@ -49,9 +52,55 @@ const Home = () => {
   const openLogoutDialog = () => logoutDialogRef.current?.showModal();
   const closeLogoutDialog = () => logoutDialogRef.current?.close();
 
+  const closeConfirmDialog = () => {
+    confirmDialogRef.current?.close();
+    setConfirmingContact("");
+  };
+
   useEffect(() => {
     if (data && data.length) setContacts(data);
   }, [data]);
+
+  useEffect(() => {
+    if (!user) return;
+    const searchParams = new URLSearchParams(location.search);
+    const connectParam = searchParams.get("connect");
+    const pendingConnection = localStorage.getItem("pendingConnection");
+    
+    const targetEmail = connectParam || pendingConnection;
+
+    if (targetEmail) {
+      if (targetEmail === user.email) {
+        toast.error("You cannot connect with yourself, 😅!");
+      } else {
+        setConfirmingContact(targetEmail);
+        setTimeout(() => confirmDialogRef.current?.showModal(), 100);
+      }
+
+      if (pendingConnection) localStorage.removeItem("pendingConnection");
+      if (connectParam) {
+        searchParams.delete("connect");
+        navigate({ search: searchParams.toString() }, { replace: true });
+      }
+    }
+  }, [location.search, user, navigate]);
+
+  const handleConfirmAdd = () => {
+    setIsAdding(true);
+    addContactMutate({ userId: user.id, email: confirmingContact }, {
+      onSuccess: () => {
+        setIsAdding(false);
+        closeConfirmDialog();
+        toast.success(`You are now connected with ${confirmingContact}, 🥳!`);
+      },
+      onError: (err) => {
+        setIsAdding(false);
+        closeConfirmDialog();
+        console.error(err?.response?.data?.stack || err.stack);
+        toast.error(`Something went wrong while adding ${confirmingContact}, 😶!`);
+      },
+    });
+  };
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -224,6 +273,27 @@ const Home = () => {
                 disabled={isLoggingOut}
               >
                 {isLoggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </div>
+          </div>
+        </dialog>
+        <dialog ref={confirmDialogRef} className="absolute top-1/2 left-1/2 z-50 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25">
+          <div className="p-5 sm:p-8">
+            <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4 pb-2">Connect Request</h3>
+            <p className="text-sm font-medium mb-6 text-center">
+              Do you want to add <strong>{confirmingContact}</strong> to your contacts?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeConfirmDialog}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="bg-green text-primary-black text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60"
+                onClick={handleConfirmAdd}
+                disabled={isAdding}
+              >
+                {isAdding ? "Connecting..." : "Add"}
               </button>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../utils/hooks/useAuth";
 import axios from "../utils/apis/axios";
 import { uploadMediaToCloudinary } from "../utils/actions/upload.actions";
+import ProfileQRCodeModal from "../components/ProfileQRCodeModal";
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -24,12 +25,16 @@ const Profile = () => {
   const nameInputRef = useRef(null);
   const deleteDialogRef = useRef(null);
   const unsavedDialogRef = useRef(null);
+  const qrDialogRef = useRef(null);
 
   const openDeleteDialog = () => deleteDialogRef.current?.showModal();
   const closeDeleteDialog = () => deleteDialogRef.current?.close();
 
   const openUnsavedDialog = () => unsavedDialogRef.current?.showModal();
   const closeUnsavedDialog = () => unsavedDialogRef.current?.close();
+
+  const openQrDialog = () => qrDialogRef.current?.showModal();
+  const closeQrDialog = () => qrDialogRef.current?.close();
 
   useEffect(() => {
     if (user) {
@@ -213,9 +218,14 @@ const Profile = () => {
               </span>
               <span className="mx-auto">Back</span>
             </button>
-            <button className="min-w-[100px] bg-green text-inherit p-1.5 border-2 border-[#101010]/75 rounded-md font-semibold hover:ring-2 hover:ring-[#101010]/75 transition-all duration-300 cursor-pointer disabled:opacity-50" onClick={handleSaveChanges} disabled={loading}>
-              {loading ? "Saving..." : "Save"}
-            </button> 
+            <div className="flex gap-3 ml-auto">
+              <button type="button" onClick={openQrDialog} className="min-w-[100px] bg-bisque text-inherit p-1.5 border-2 border-[#101010]/75 rounded-md font-semibold hover:ring-2 hover:ring-[#101010]/75 transition-all duration-300 cursor-pointer inline-flex items-center justify-center">
+                <i className='bx bx-qr-scan mr-1 text-lg'></i> Share
+              </button>
+              <button className="min-w-[100px] bg-green text-inherit p-1.5 border-2 border-[#101010]/75 rounded-md font-semibold hover:ring-2 hover:ring-[#101010]/75 transition-all duration-300 cursor-pointer disabled:opacity-50" onClick={handleSaveChanges} disabled={loading}>
+                {loading ? "Saving..." : "Save"}
+              </button> 
+            </div>
           </div>
 
            {message && (
@@ -264,6 +274,8 @@ const Profile = () => {
           </div>
         </div>
       </dialog>
+
+      <ProfileQRCodeModal dialogRef={qrDialogRef} user={user} onClose={closeQrDialog} />
     </div>
   );
 };

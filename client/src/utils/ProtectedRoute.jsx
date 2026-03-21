@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { toast } from 'react-toastify';
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import axios from "./apis/axios";
 import Loading from "../components/Loading";
 import useAuth from "./hooks/useAuth";
@@ -10,6 +10,7 @@ const ProtectedRoute = () => {
   const { connectSocket } = useSocket();
   const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     (async () => {
@@ -20,12 +21,19 @@ const ProtectedRoute = () => {
         connectSocket();
       } catch (error) {
         console.error(error?.response?.data.stack ||error.stack);
+        
+        const searchParams = new URLSearchParams(location.search);
+        const connectEmail = searchParams.get("connect");
+        if (connectEmail) {
+          localStorage.setItem("pendingConnection", connectEmail);
+        }
+
         toast.info("Please login to continue, 😙!");
         setIsAuthenticated(false); // User is not authenticated
         navigate("/sign-in", {replace: true});
       }
     })();
-  }, [navigate]);
+  }, [navigate, location.search, connectSocket, setIsAuthenticated, setUser]);
 
   if (isAuthenticated === null) return <Loading />;
   return <Outlet />; // If authenticated, render the children components
