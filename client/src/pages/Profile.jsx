@@ -38,14 +38,17 @@ const Profile = () => {
 
   useEffect(() => {
     if (user) {
-      setName(user.name);
+      setName((prev) => prev !== user.name && !isEditing ? user.name : prev);
       setEmail(user.email);
       const timeFormatter = new Intl.DateTimeFormat("en-GB");
       setCreatedAt(timeFormatter.format(new Date(user.createdAt)));
       setImageError(false);
-      setProfilePicUrl(user.profilePicUrl);
+      // Only reset the profile picture URL if a new one hasn't been locally selected
+      if (!profilePic) {
+        setProfilePicUrl(user.profilePicUrl);
+      }
     }
-  }, [user]);
+  }, [user, isEditing, profilePic]);
 
   useEffect(() => {
     if (isEditing && nameInputRef.current) {

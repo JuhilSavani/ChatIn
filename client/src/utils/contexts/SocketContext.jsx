@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
 import useAuth from "../hooks/useAuth";
@@ -56,19 +56,17 @@ export const SocketProvider = ({ children }) => {
     }
   }, [isAuthenticated]);
 
-  const connectSocket = () => {
+  const connectSocket = useCallback(() => {
     if (socket && !socket.connected) {
       socket.connect();
-      setSocket(socket);
     }
-  };
+  }, [socket]);
 
-  const disconnectSocket = () => {
+  const disconnectSocket = useCallback(() => {
     if (socket && socket.connected) {
       socket.disconnect();
-      setSocket(null);
     }
-  };
+  }, [socket]);
 
   return (
     <SocketContext.Provider value={{ socket, connectSocket, disconnectSocket }}>
