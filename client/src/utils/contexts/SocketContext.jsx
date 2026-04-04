@@ -35,7 +35,7 @@ export const SocketProvider = ({ children }) => {
               {newMessage.sender.email}
             </span>
             <span className="block truncate text-[0.9rem]">
-              {newMessage.content}
+              {newMessage.content || `📎 ${newMessage.attachments?.length || 0} attachment(s)`}
             </span>
           </div>
         );

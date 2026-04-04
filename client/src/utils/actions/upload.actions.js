@@ -37,3 +37,32 @@ export async function uploadMediaToCloudinary(file) {
 
   return response.json();
 }
+
+export async function uploadChatMedia(file) {
+  // 1. Get media signature
+  const { data: signData } = await axios.post("/upload/sign-media");
+  const { signature, timestamp, folder, apiKey, cloudName } = signData;
+
+  // 2. FormData — must match signed params exactly
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("api_key", apiKey);
+  formData.append("timestamp", timestamp);
+  formData.append("signature", signature);
+  formData.append("folder", folder);
+  formData.append("use_filename", "true");
+  formData.append("unique_filename", "true");
+
+  // 3. Force non-images to upload as 'raw' to avoid Cloudinary's Strict PDF block (HTTP 401)
+  const resourceType = file.type.startsWith("image/") ? "image" : "raw";
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+  const response = await fetch(url, { method: "POST", body: formData });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Upload failed (${response.status})`);
+  }
+
+  return response.json();
+  // Returns: { public_id, secure_url, resource_type, original_filename, ... }
+}

@@ -26,7 +26,13 @@ export const Message = sequelize.define(
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false, // Message content can't be empty
+      allowNull: true, // Message content can be empty if it has attachments
+    },
+    attachments: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+      defaultValue: null,
+      // Shape when present: [{ publicId, secureUrl, resourceType, name }]
     },
     timestamp: {
       type: DataTypes.DATE,

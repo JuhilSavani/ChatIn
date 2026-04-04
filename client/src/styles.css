@@ -186,4 +186,34 @@
       margin-bottom: 0.5rem !important;
     }
   }
+
+  /* ──── File Preview ──── */
+  @keyframes file-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .file-preview-scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(51, 51, 51, 0.2) transparent;
+  }
+
+  .file-preview-scrollable::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .file-preview-scrollable::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .file-preview-scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(51, 51, 51, 0.2);
+    border-radius: 4px;
+  }
 }

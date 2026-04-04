@@ -20,7 +20,7 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.findAll({
       where: { connectionId },
-      attributes: ["id", "content", "timestamp"],
+      attributes: ["id", "content", "timestamp", "attachments"],
       include: [
         {
           model: User,
@@ -45,12 +45,12 @@ export const getMessages = async (req, res) => {
 };
 
 export const sendMessage = async (req, res) => {
-  const { connectionId, senderId, recieverId, content } = req.body;
+  const { connectionId, senderId, recieverId, content, attachments } = req.body;
 
   try {
-    if (!connectionId || !senderId || !recieverId || !content)
+    if (!connectionId || !senderId || !recieverId || (!content && !attachments?.length))
       return res.status(400).json({
-        message: "connectionId, senderId, recieverId and content are required.",
+        message: "connectionId, senderId, recieverId, and either content or attachments are required.",
       });
 
     // Temporary latency to test pending message UI.
@@ -85,13 +85,19 @@ export const sendMessage = async (req, res) => {
       }
     }
 
-    const message = await Message.create({ connectionId, senderId, content });
+    const message = await Message.create({ 
+      connectionId, 
+      senderId, 
+      content: content || null,
+      attachments: attachments?.length ? attachments : null,
+    });
 
     const newMessage = { 
       id: message.id,
       connectionId: message.connectionId,
       content: message.content,
       timestamp: message.timestamp,
+      attachments: message.attachments,
       sender: { 
         id: message.senderId, 
         email: connection.user1.id === senderId 
