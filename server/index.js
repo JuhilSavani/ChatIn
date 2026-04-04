@@ -10,6 +10,7 @@ import messageRoutes from "./routes/message.routes.js";
 import profileRoutes from "./routes/profile.routes.js"
 import verificationRoutes from "./routes/verification.routes.js"
 import uploadRoutes from "./routes/upload.routes.js";
+import { authenticateJWT } from "./middlewares.js";
 import { app, server } from "./socket.js";
 import path from "path";
 
@@ -46,10 +47,11 @@ if(!isProduction){
 
 // Actual Routes
 app.use("/api/authorize", authRoutes);
+app.use("/api/verify", verificationRoutes);
+app.use(authenticateJWT);
 app.use("/api/connections", connectionRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/verify", verificationRoutes);
 app.use("/api/upload", uploadRoutes);
 
 if(isProduction){

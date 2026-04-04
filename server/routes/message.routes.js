@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { authenticateJWT } from "../middlewares.js";
 import { getMessages, sendMessage } from "../controllers/message.controllers.js";
 
 const router = Router();
 
-router.get(`/:connectionId`, authenticateJWT, getMessages);
-router.post(`/send`, authenticateJWT, sendMessage);
+router.get(`/:connectionId`, getMessages);
+router.post(`/send`, sendMessage);
 
 export default router;
