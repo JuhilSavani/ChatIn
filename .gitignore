@@ -12,7 +12,9 @@ node_modules
 dist
 dist-ssr
 *.local
+TODOS.md
 syncProductionDatabase.js
+context/*
 
 # Editor directories and files
 .vscode/*
@@ -24,4 +26,3 @@ syncProductionDatabase.js
 *.njsproj
 *.sln
 *.sw?
-future_modifications.txt
