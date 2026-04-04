@@ -45,14 +45,20 @@ if(!isProduction){
   });
 }
 
-// Actual Routes
+// Public Routes
 app.use("/api/authorize", authRoutes);
 app.use("/api/verify", verificationRoutes);
-app.use(authenticateJWT);
-app.use("/api/connections", connectionRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/upload", uploadRoutes);
+
+// Protected API Routes
+const protectedApi = express.Router();
+protectedApi.use(authenticateJWT);
+protectedApi.use("/connections", connectionRoutes);
+protectedApi.use("/messages", messageRoutes);
+protectedApi.use("/profile", profileRoutes);
+protectedApi.use("/upload", uploadRoutes);
+
+// Mount the protected router
+app.use("/api", protectedApi);
 
 if(isProduction){
   app.use(express.static(path.join(__dirname, "../client/dist")));
