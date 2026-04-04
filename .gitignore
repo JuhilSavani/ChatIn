@@ -12,6 +12,7 @@ node_modules
 dist
 dist-ssr
 *.local
+syncProductionDatabase.js
 
 # Editor directories and files
 .vscode/*
