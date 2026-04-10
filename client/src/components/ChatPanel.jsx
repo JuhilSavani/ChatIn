@@ -573,6 +573,12 @@ const ChatPanel = ({ contact, onBack }) => {
               placeholder="Type a message..."
               ref={messageRef}
               onKeyDown={handleKeyDown}
+              onFocus={() => {
+                setTimeout(() => {
+                  window.scrollTo(0, 0);
+                  document.body.scrollTop = 0;
+                }, 100);
+              }}
               onChange={(e) => {
                 setInputText(e.target.value);
                 e.target.style.height = "auto";
