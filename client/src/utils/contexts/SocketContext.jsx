@@ -42,13 +42,17 @@ export const SocketProvider = ({ children }) => {
         );
       });
 
-      socketInstance.on("messageReactionUpdate", ({ messageId, connectionId, reactions }) => {
+      socketInstance.on("messageReactionUpdate", ({ messageId, connectionId, reactions, action, reactorName, emoji }) => {
         queryClient.setQueryData(["messages", connectionId], (oldData) => {
           if (!oldData) return oldData;
           return oldData.map((msg) =>
             msg.id === messageId ? { ...msg, reactions } : msg
           );
         });
+
+        if (action === "added" && reactorName && emoji) {
+          toast.success(`${reactorName} reacted with ${emoji}`);
+        }
       });
 
       setSocket(socketInstance);

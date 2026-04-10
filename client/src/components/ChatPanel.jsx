@@ -195,11 +195,24 @@ const ChatPanel = ({ contact, onBack }) => {
     return "bx bx-file-blank";
   };
 
-  // Scroll down to the bottom on message state update
+  const previousDataLengthRef = useRef(0);
+  const previousConnectionIdRef = useRef(connectionId);
+
+  // Auto-scroll when switching contacts, receiving new messages, or sending pending ones
   useEffect(() => {
-    chatAreaRef.current 
-    && (chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight);
-  }, [data, pendingMessages]);
+    if (chatAreaRef.current) {
+      const currentDataLength = Array.isArray(data) ? data.length : 0;
+      const isNewConnection = previousConnectionIdRef.current !== connectionId;
+      const hasAddedNewMessage = currentDataLength > previousDataLengthRef.current;
+      
+      if (isNewConnection || hasAddedNewMessage || pendingMessages.length > 0) {
+         chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+      }
+      
+      previousDataLengthRef.current = currentDataLength;
+      previousConnectionIdRef.current = connectionId;
+    }
+  }, [data, pendingMessages, connectionId]);
 
   const handleSendMessage = () => {
     const messageContent = inputText.trim();
@@ -414,7 +427,7 @@ const ChatPanel = ({ contact, onBack }) => {
                         )}
                       </div>
                     )}
-                    {msg.content && <span className="break-words min-w-0 w-full block text-[0.95rem] leading-relaxed mx-0.5 mt-0.5">{msg.content}</span>}
+                    {msg.content && <span className={`break-words min-w-0 w-full block text-[0.95rem] leading-relaxed mx-0.5 mt-0.5 ${msg.sender.id === user.id ? "text-right" : "text-left"}`}>{msg.content}</span>}
                     {msg.isPending ? (
                       <span className="chatin-loading-badge">
                         <i className="bx bx-loader-alt chatin-loading-spinner text-[0.9rem]"></i>
@@ -426,35 +439,33 @@ const ChatPanel = ({ contact, onBack }) => {
                         
                         {/* Reactions Display Inline */}
                         {msg.reactions && Object.keys(msg.reactions).length > 0 && (
-                          <div className={`flex flex-wrap gap-1 ${msg.sender.id === user.id ? "flex-row-reverse" : "flex-row"}`}>
-                            {Object.entries(
-                              Object.entries(msg.reactions).reduce((acc, [uid, reaction]) => {
-                                acc[reaction] = (acc[reaction] || 0) + 1;
-                                return acc;
-                              }, {})
-                            ).map(([emoji, count]) => (
+                          <div className={`flex items-center gap-1 leading-none ${msg.sender.id === user.id ? "flex-row-reverse" : "flex-row"}`}>
+                            {Object.values(msg.reactions).map((emoji, index) => (
                               <button
-                                key={emoji}
-                                onClick={() => handleReactToMessage(msg.id, emoji)}
-                                className={`flex items-center gap-1 px-[5px] py-[1px] text-[0.7rem] rounded-[4px] border border-primary-black/30 bg-primary-white hover:bg-[#f0f0f0] transition-colors cursor-pointer ${
-                                  msg.reactions[user.id] === emoji ? "border-primary-black font-bold bg-black/10 shadow-sm" : ""
+                                key={`${emoji}-${index}`}
+                                onClick={() => {
+                                  if (msg.sender.id !== user.id) handleReactToMessage(msg.id, emoji);
+                                }}
+                                disabled={msg.sender.id === user.id}
+                                className={`text-[1.15rem] leading-none transition-transform ${
+                                  msg.sender.id !== user.id ? "cursor-pointer" : "cursor-default drop-shadow-sm"
                                 }`}
                               >
-                                <span>{emoji}</span>
-                                <span className="opacity-80">{count}</span>
+                                {emoji}
                               </button>
                             ))}
                           </div>
                         )}
 
                         {/* Emoji Picker Trigger & Menu */}
-                        <div className={`flex-shrink-0 relative opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${activeEmojiPickerId === msg.id ? "opacity-100" : ""}`}>
+                        <div className={`flex-shrink-0 relative transition-opacity duration-200 ${msg.sender.id !== user.id ? `opacity-0 group-hover:opacity-100 ${activeEmojiPickerId === msg.id ? "opacity-100" : ""}` : "invisible"}`}>
                           <Popover
                             open={activeEmojiPickerId === msg.id}
-                            onOpenChange={(open) => setActiveEmojiPickerId(open ? msg.id : null)}
+                            onOpenChange={(open) => msg.sender.id !== user.id && setActiveEmojiPickerId(open ? msg.id : null)}
                           >
                             <PopoverTrigger asChild>
                               <button
+                                disabled={msg.sender.id === user.id}
                                 className="text-primary-black/60 hover:text-primary-black text-[1.1rem] transition-colors cursor-pointer flex items-center justify-center p-0.5 rounded-full hover:bg-black/5"
                               >
                                 <i className="bx bx-smile"></i>

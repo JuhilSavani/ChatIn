@@ -163,11 +163,18 @@ export const reactToMessage = async (req, res) => {
     let currentReactions = message.reactions || {};
     
     // Toggle logic: If user already reacted with the same string, remove it.
+    let action = '';
     if (currentReactions[userId] === reaction) {
       delete currentReactions[userId];
+      action = 'removed';
     } else {
       currentReactions[userId] = reaction;
+      action = 'added';
     }
+
+    // Fetch user for notification
+    const reactor = await User.findByPk(userId);
+    const reactorName = reactor ? reactor.name : "Someone";
 
     // Required since we are modifying a JSON field
     message.reactions = currentReactions;
@@ -181,7 +188,10 @@ export const reactToMessage = async (req, res) => {
       io.to(socketId).emit("messageReactionUpdate", {
         messageId: message.id,
         connectionId: message.connectionId,
-        reactions: message.reactions
+        reactions: message.reactions,
+        action,
+        reactorName,
+        emoji: reaction
       });
     }
 
