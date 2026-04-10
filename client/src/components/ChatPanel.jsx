@@ -2,8 +2,11 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import useAuth from "../utils/hooks/useAuth";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
+import reactToMessage from "../utils/controllers/reactToMessage";
 import { uploadChatMedia } from "../utils/actions/upload.actions";
 import { toast } from "react-toastify";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { EmojiPicker, EmojiPickerSearch, EmojiPickerContent, EmojiPickerFooter } from "./ui/emoji-picker";
 
 const ChatPanel = ({ contact, onBack }) => {
   const { connectionId, connectedUser } = contact;
@@ -19,6 +22,20 @@ const ChatPanel = ({ contact, onBack }) => {
 
   const { data, isLoading, isError, error } = fetchMessages(connectionId);
   const { mutateAsync: sendMsgAsync } = sendMessage();
+  const { mutate: reactToMessageMutate } = reactToMessage();
+
+  const [activeEmojiPickerId, setActiveEmojiPickerId] = useState(null);
+
+  const handleReactToMessage = useCallback((messageId, reaction) => {
+    reactToMessageMutate({
+      messageId,
+      reaction,
+      userId: user.id,
+      connectionId,
+      receiverId: connectedUser.id,
+    });
+    setActiveEmojiPickerId(null);
+  }, [reactToMessageMutate, user.id, connectionId, connectedUser.id]);
 
   const timeFormatter = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit',
@@ -362,9 +379,10 @@ const ChatPanel = ({ contact, onBack }) => {
             <div key={date} className={index !== groupedEntries.length - 1 ? "pb-2 border-b border-primary-black" : ""}>
               <span className="bg-bisque border-2 border-[#101010]/75 p-2 rounded block my-4 mx-auto text-center w-fit min-w-[120px] sm:min-w-[150px]">{date}</span>
               {groupedDateMessages.map((msg) => (
-                <div key={msg.id} className={`flex flex-col my-2 ${msg.sender.id === user.id ? "items-end" : "items-start"}`}>
-                  <p className={`flex flex-col border-2 border-[#101010]/75 px-2 pt-2 pb-[2px] max-w-[85%] sm:max-w-[72%] lg:max-w-[45%] ${msg.sender.id === user.id ? "bg-green items-end rounded-[6px_0_6px_6px]" : "bg-beige items-start rounded-[0_6px_6px_6px]"}`}>
-                    {msg.attachments?.length > 0 && (
+                <div key={msg.id} className={`group flex flex-col my-2 w-full ${msg.sender.id === user.id ? "items-end" : "items-start"}`}>
+                  <div className={`relative flex ${msg.sender.id === user.id ? "flex-row-reverse" : "flex-row"} max-w-[85%] sm:max-w-[72%] lg:max-w-[45%]`}>
+                    <div className={`flex flex-col border-2 border-[#101010]/75 px-2 pt-2 pb-[2px] w-full ${msg.sender.id === user.id ? "bg-green items-end rounded-[6px_0_6px_6px]" : "bg-beige items-start rounded-[0_6px_6px_6px]"}`}>
+                      {msg.attachments?.length > 0 && (
                       <div className="flex flex-col gap-1.5 mb-1 mt-0.5 w-full">
                         {msg.attachments.map((att, idx) =>
                           att.resourceType === "image" ? (
@@ -403,9 +421,68 @@ const ChatPanel = ({ contact, onBack }) => {
                         Sending...
                       </span>
                     ) : (
-                      <span className="mt-1 bg-primary-white text-[0.65rem] p-[2px] rounded-[3px] border border-primary-black/25 leading-none">{timeFormatter.format(new Date(msg.timestamp))}</span>
+                      <div className={`flex items-center gap-1 mt-1 ${msg.sender.id === user.id ? "flex-row-reverse" : "flex-row"}`}>
+                        <span className="flex-shrink-0 bg-primary-white text-[0.65rem] p-[2px] rounded-[3px] border border-primary-black/25 leading-none opacity-90">{timeFormatter.format(new Date(msg.timestamp))}</span>
+                        
+                        {/* Reactions Display Inline */}
+                        {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                          <div className={`flex flex-wrap gap-1 ${msg.sender.id === user.id ? "flex-row-reverse" : "flex-row"}`}>
+                            {Object.entries(
+                              Object.entries(msg.reactions).reduce((acc, [uid, reaction]) => {
+                                acc[reaction] = (acc[reaction] || 0) + 1;
+                                return acc;
+                              }, {})
+                            ).map(([emoji, count]) => (
+                              <button
+                                key={emoji}
+                                onClick={() => handleReactToMessage(msg.id, emoji)}
+                                className={`flex items-center gap-1 px-[5px] py-[1px] text-[0.7rem] rounded-[4px] border border-primary-black/30 bg-primary-white hover:bg-[#f0f0f0] transition-colors cursor-pointer ${
+                                  msg.reactions[user.id] === emoji ? "border-primary-black font-bold bg-black/10 shadow-sm" : ""
+                                }`}
+                              >
+                                <span>{emoji}</span>
+                                <span className="opacity-80">{count}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Emoji Picker Trigger & Menu */}
+                        <div className={`flex-shrink-0 relative opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${activeEmojiPickerId === msg.id ? "opacity-100" : ""}`}>
+                          <Popover
+                            open={activeEmojiPickerId === msg.id}
+                            onOpenChange={(open) => setActiveEmojiPickerId(open ? msg.id : null)}
+                          >
+                            <PopoverTrigger asChild>
+                              <button
+                                className="text-primary-black/60 hover:text-primary-black text-[1.1rem] transition-colors cursor-pointer flex items-center justify-center p-0.5 rounded-full hover:bg-black/5"
+                              >
+                                <i className="bx bx-smile"></i>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent 
+                              className="w-[300px] p-0 shadow-lg border-none bg-primary-black" 
+                              align={msg.sender.id === user.id ? "end" : "start"} 
+                              sideOffset={8}
+                            >
+                              <EmojiPicker 
+                                className="h-[312px] w-full border-none outline-none" 
+                                onEmojiSelect={({ emoji }) => {
+                                  handleReactToMessage(msg.id, emoji);
+                                  setActiveEmojiPickerId(null);
+                                }}
+                              >
+                                <EmojiPickerSearch />
+                                <EmojiPickerContent />
+                                <EmojiPickerFooter />
+                              </EmojiPicker>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
                     )}
-                  </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

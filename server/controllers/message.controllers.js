@@ -20,7 +20,7 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.findAll({
       where: { connectionId },
-      attributes: ["id", "content", "timestamp", "attachments"],
+      attributes: ["id", "content", "timestamp", "attachments", "reactions"],
       include: [
         {
           model: User,
@@ -98,6 +98,7 @@ export const sendMessage = async (req, res) => {
       content: message.content,
       timestamp: message.timestamp,
       attachments: message.attachments,
+      reactions: message.reactions || {},
       sender: { 
         id: message.senderId, 
         email: connection.user1.id === senderId 
@@ -139,6 +140,63 @@ export const deleteMessage = async (req, res) => {
     );
     return res.status(500).json({
       message: "An error occurred while deleting the message.",
+      error: error.message,
+    });
+  }
+};
+
+export const reactToMessage = async (req, res) => {
+  const { messageId } = req.params;
+  const { reaction, userId, receiverId } = req.body;
+
+  try {
+    if (!reaction || !userId || !receiverId) {
+      return res.status(400).json({ message: "reaction, userId, and receiverId are required." });
+    }
+
+    const message = await Message.findByPk(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found." });
+    }
+
+    // Ensure reactions is an object
+    let currentReactions = message.reactions || {};
+    
+    // Toggle logic: If user already reacted with the same string, remove it.
+    if (currentReactions[userId] === reaction) {
+      delete currentReactions[userId];
+    } else {
+      currentReactions[userId] = reaction;
+    }
+
+    // Required since we are modifying a JSON field
+    message.reactions = currentReactions;
+    message.changed('reactions', true);
+
+    await message.save();
+
+    // Emit real-time notification to the receiver
+    const socketId = getSocketId(receiverId);
+    if (socketId) {
+      io.to(socketId).emit("messageReactionUpdate", {
+        messageId: message.id,
+        connectionId: message.connectionId,
+        reactions: message.reactions
+      });
+    }
+
+    return res.status(200).json({ 
+      messageId: message.id,
+      reactions: message.reactions 
+    });
+
+  } catch (error) {
+    console.error(
+      "[message.controllers.js] Error toggling reaction: ",
+      error.stack
+    );
+    return res.status(500).json({
+      message: "An error occurred while toggling the reaction.",
       error: error.message,
     });
   }

@@ -34,6 +34,12 @@ export const Message = sequelize.define(
       defaultValue: null,
       // Shape when present: [{ publicId, secureUrl, resourceType, name }]
     },
+    reactions: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+      defaultValue: {},
+      // Shape: { "userId1": "👍", "userId2": "❤️" }
+    },
     timestamp: {
       type: DataTypes.DATE,
       allowNull: false,

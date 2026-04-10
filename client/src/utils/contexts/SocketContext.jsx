@@ -27,6 +27,7 @@ export const SocketProvider = ({ children }) => {
       socketInstance.on("newConnection", () => {
         queryClient.invalidateQueries(["connections"]);
       });
+      
       socketInstance.on("newMessage", (newMessage) => {
         queryClient.invalidateQueries(["messages", newMessage.connectionId]);
         toast.success(
@@ -39,6 +40,15 @@ export const SocketProvider = ({ children }) => {
             </span>
           </div>
         );
+      });
+
+      socketInstance.on("messageReactionUpdate", ({ messageId, connectionId, reactions }) => {
+        queryClient.setQueryData(["messages", connectionId], (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.map((msg) =>
+            msg.id === messageId ? { ...msg, reactions } : msg
+          );
+        });
       });
 
       setSocket(socketInstance);
