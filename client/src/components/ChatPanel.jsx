@@ -472,12 +472,14 @@ const ChatPanel = ({ contact, onBack }) => {
                               </button>
                             </PopoverTrigger>
                             <PopoverContent 
-                              className="w-[300px] p-0 shadow-lg border-none bg-primary-black" 
+                              className="w-[300px] max-w-[95vw] shadow-lg border-none bg-primary-black flex flex-col p-0" 
                               align={msg.sender.id === user.id ? "end" : "start"} 
                               sideOffset={8}
+                              collisionPadding={10}
+                              style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 10px)" }}
                             >
                               <EmojiPicker 
-                                className="h-[312px] w-full border-none outline-none" 
+                                className="h-[312px] max-h-full w-full border-none outline-none" 
                                 onEmojiSelect={({ emoji }) => {
                                   handleReactToMessage(msg.id, emoji);
                                   setActiveEmojiPickerId(null);
