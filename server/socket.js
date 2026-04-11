@@ -20,10 +20,21 @@ const socketMap = {};
 
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
-  if (userId) socketMap[userId] = socket.id;
-  socket.on("disconnect", () => delete socketMap[userId]);
+  if (userId) {
+    if (!socketMap[userId]) socketMap[userId] = new Set();
+    socketMap[userId].add(socket.id);
+  }
+
+  socket.on("disconnect", () => {
+    if (userId && socketMap[userId]) {
+      socketMap[userId].delete(socket.id);
+      if (socketMap[userId].size === 0) delete socketMap[userId];
+    }
+  });
 });
 
-const getSocketId = (userId) => socketMap[userId];
+// Returns array of all active socket IDs for a user (supports multiple tabs)
+const getSocketIds = (userId) =>
+  socketMap[userId] ? Array.from(socketMap[userId]) : [];
 
-export { app, server, io, getSocketId };
+export { app, server, io, getSocketIds };

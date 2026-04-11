@@ -2,7 +2,7 @@ import { Message } from "../models/message.models.js";
 import { User } from "../models/user.models.js";
 import { Connection } from "../models/connection.models.js";
 import { Op } from "sequelize";
-import { getSocketId, io } from "../socket.js";
+import { getSocketIds, io } from "../socket.js";
 import { computedConnection } from "./connection.controllers.js";
 
 // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -73,8 +73,8 @@ export const sendMessage = async (req, res) => {
           connection.status = "pending";
           await connection.save();
           const newConnection = computedConnection(recieverId, connection);
-          const socketId = getSocketId(recieverId);
-          if(socketId) io.to(socketId).emit("newConnection", newConnection);
+          const socketIds = getSocketIds(recieverId);
+          socketIds.forEach((sid) => io.to(sid).emit("newConnection", newConnection));
           break;
         case "pending":
           if (connection.user2.id == senderId){ 
@@ -106,8 +106,8 @@ export const sendMessage = async (req, res) => {
       }
     };
 
-    const socketId = getSocketId(recieverId);
-    if(socketId) io.to(socketId).emit("newMessage", newMessage);
+    const socketIds = getSocketIds(recieverId);
+    socketIds.forEach((sid) => io.to(sid).emit("newMessage", newMessage));
 
     return res.status(201).json(newMessage);
   } catch (error) {
@@ -183,17 +183,17 @@ export const reactToMessage = async (req, res) => {
     await message.save();
 
     // Emit real-time notification to the receiver
-    const socketId = getSocketId(receiverId);
-    if (socketId) {
-      io.to(socketId).emit("messageReactionUpdate", {
+    const socketIds = getSocketIds(receiverId);
+    socketIds.forEach((sid) =>
+      io.to(sid).emit("messageReactionUpdate", {
         messageId: message.id,
         connectionId: message.connectionId,
         reactions: message.reactions,
         action,
         reactorName,
         emoji: reaction
-      });
-    }
+      })
+    );
 
     return res.status(200).json({ 
       messageId: message.id,
