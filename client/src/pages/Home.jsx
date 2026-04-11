@@ -236,7 +236,7 @@ const Home = () => {
           <div className="p-5 sm:p-8">
             <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Add Contact</h3>
             <form onSubmit={handleAdd}>
-              <label className="block text-md ml-2 font-semibold">
+              <label className="block text-md font-semibold">
                 Email:
                 <input
                   type="email"
@@ -246,13 +246,13 @@ const Home = () => {
                   required
                 />
               </label>
-              <div className="flex justify-center gap-4 mt-6">
-                <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold h-[45px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeDialog} disabled={isAdding}>
+              <div className="flex w-full justify-center gap-4 mt-6">
+                <button type="button" className="flex-1 bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex justify-center items-center font-semibold h-[45px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeDialog} disabled={isAdding}>
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-green text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold h-[45px] min-w-[140px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex-1 bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold h-[45px] hover:bg-secondary-black cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={isAdding}
                 >
                   {isAdding ? (
@@ -272,13 +272,13 @@ const Home = () => {
           <div className="p-5 sm:p-8">
             <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Logout</h3>
             <p className="text-sm font-medium mb-6">Are you sure you want to log out of ChatIn?</p>
-            <div className="flex justify-center gap-4">
-              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeLogoutDialog}>
+            <div className="flex w-full justify-center gap-4">
+              <button type="button" className="flex-1 bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex justify-center items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={closeLogoutDialog}>
                 Cancel
               </button>
               <button
                 type="button"
-                className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60"
+                className="flex-1 bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex justify-center items-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
               >
@@ -293,13 +293,13 @@ const Home = () => {
             <p className="text-sm font-medium mb-6 text-center">
               Do you want to add <strong>{confirmingContact}</strong> to your contacts?
             </p>
-            <div className="flex justify-center gap-4">
-              <button type="button" className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeConfirmDialog} disabled={isAdding}>
+            <div className="flex w-full justify-center gap-4">
+              <button type="button" className="flex-1 bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex justify-center items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" onClick={closeConfirmDialog} disabled={isAdding}>
                 Cancel
               </button>
               <button
                 type="button"
-                className="bg-green text-primary-black text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold min-w-[140px] hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={handleConfirmAdd}
                 disabled={isAdding}
               >

@@ -25,6 +25,7 @@ const ChatPanel = ({ contact, onBack }) => {
   const { mutate: reactToMessageMutate } = reactToMessage();
 
   const [activeEmojiPickerId, setActiveEmojiPickerId] = useState(null);
+  const [reactionToRemove, setReactionToRemove] = useState(null);
 
   const handleReactToMessage = useCallback((messageId, reaction) => {
     reactToMessageMutate({
@@ -408,21 +409,27 @@ const ChatPanel = ({ contact, onBack }) => {
                               />
                             </div>
                           ) : (
-                            <a
+                            <div
                               key={idx}
-                              href={att.secureUrl || "#"}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center w-full min-w-[200px] max-w-full gap-2.5 p-2 bg-primary-white border border-[#101010]/25 rounded hover:bg-bisque transition-colors"
+                              className="flex items-center w-full min-w-[200px] max-w-full gap-2.5 p-2 bg-primary-white border border-[#101010]/25 rounded hover:bg-white/5 transition-colors"
                             >
                               <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 border border-[#101010]/15 rounded bg-black/5 text-primary-black/70">
                                 <i className="bx bxs-file-blank text-[1.4rem]"></i>
                               </div>
-                              <div className="flex flex-col min-w-0 pr-1">
+                              <div className="flex flex-col min-w-0 pr-1 flex-1">
                                 <span className="truncate text-[0.85rem] font-[550] text-primary-black leading-tight">{att.name}</span>
                                 <span className="text-[0.65rem] text-primary-black/60 uppercase mt-[2px] font-medium">{att.name.lastIndexOf('.') !== -1 ? att.name.split('.').pop() : 'FILE'} • Document</span>
                               </div>
-                            </a>
+                              <a
+                                href={att.secureUrl || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded bg-black/5 hover:bg-black/10 text-primary-black/70 hover:text-primary-black transition-colors cursor-pointer"
+                              >
+                                <i className="bx bx-download text-[1.2rem]"></i>
+                              </a>
+                            </div>
                           )
                         )}
                       </div>
@@ -444,7 +451,7 @@ const ChatPanel = ({ contact, onBack }) => {
                               <button
                                 key={`${emoji}-${index}`}
                                 onClick={() => {
-                                  if (msg.sender.id !== user.id) handleReactToMessage(msg.id, emoji);
+                                  if (msg.sender.id !== user.id) setReactionToRemove({ messageId: msg.id, emoji });
                                 }}
                                 disabled={msg.sender.id === user.id}
                                 className={`text-[1.15rem] leading-none transition-transform ${
@@ -458,7 +465,7 @@ const ChatPanel = ({ contact, onBack }) => {
                         )}
 
                         {/* Emoji Picker Trigger & Menu */}
-                        <div className={`flex-shrink-0 relative transition-opacity duration-200 ${msg.sender.id !== user.id ? `opacity-0 group-hover:opacity-100 ${activeEmojiPickerId === msg.id ? "opacity-100" : ""}` : "invisible"}`}>
+                        <div className={`flex-shrink-0 relative ${msg.sender.id === user.id ? "invisible" : ""}`}>
                           <Popover
                             open={activeEmojiPickerId === msg.id}
                             onOpenChange={(open) => msg.sender.id !== user.id && setActiveEmojiPickerId(open ? msg.id : null)}
@@ -466,9 +473,9 @@ const ChatPanel = ({ contact, onBack }) => {
                             <PopoverTrigger asChild>
                               <button
                                 disabled={msg.sender.id === user.id}
-                                className="text-primary-black/60 hover:text-primary-black text-[1.1rem] transition-colors cursor-pointer flex items-center justify-center p-0.5 rounded-full hover:bg-black/5"
+                                className="text-primary-black/60 hover:text-primary-black text-[1.1rem] transition-colors cursor-pointer flex items-center justify-center p-0.5 rounded-full bg-black/5 hover:bg-black/10"
                               >
-                                <i className="bx bx-smile"></i>
+                                <i className="bx bx-happy-alt"></i>
                               </button>
                             </PopoverTrigger>
                             <PopoverContent 
@@ -594,6 +601,35 @@ const ChatPanel = ({ contact, onBack }) => {
           </button>
         </div>
       </section>
+
+      {reactionToRemove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-black/25 backdrop-blur-sm">
+          <div className="w-[min(400px,calc(100vw-2rem))] rounded-md border-2 border-primary-black/25 bg-bisque text-primary-black p-5 sm:p-6 flex flex-col items-center">
+            <p className="text-md font-semibold mb-5 text-center">
+              Are you sure you want to remove your <span className="text-[1.2rem]">{reactionToRemove.emoji}</span> reaction?
+            </p>
+            <div className="flex w-full justify-center gap-4">
+              <button 
+                type="button" 
+                className="flex-1 bg-primary-white text-sm py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+                onClick={() => setReactionToRemove(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                className="flex-1 bg-primary-black text-primary-white text-sm py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 font-semibold hover:bg-secondary-black cursor-pointer"
+                onClick={() => {
+                  handleReactToMessage(reactionToRemove.messageId, reactionToRemove.emoji);
+                  setReactionToRemove(null);
+                }}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
