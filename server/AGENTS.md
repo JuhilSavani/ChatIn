@@ -1,4 +1,4 @@
-# BACKEND_GUIDELINES.AGENTS.md
+# BACKEND GUIDELINES
 
 > AI Coding Agent Guidelines for ChatIn - Backend (Express / Sequelize / Socket.io)
 

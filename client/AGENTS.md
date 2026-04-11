@@ -1,4 +1,4 @@
-# FRONTEND_GUIDELINES.AGENTS.md
+# FRONTEND GUIDELINES
 
 > AI Coding Agent Guidelines for ChatIn - Frontend (React / TanStack Query / Tailwind)
 

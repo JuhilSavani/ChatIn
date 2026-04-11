@@ -1,4 +1,4 @@
-# PROJECT_OVERVIEW.AGENTS.md
+# PROJECT OVERVIEW
 
 > AI Coding Agent Guidelines for ChatIn - Real-Time Chat Application
 
@@ -55,10 +55,9 @@
 ChatIn/
 ├── package.json                             # Root monorepo scripts
 ├── README.md                                # Project documentation
-├── PROJECT_OVERVIEW.AGENTS.md               # Project overview, structure, commands, and critical patterns
-├── BACKEND_GUIDELINES.AGENTS.md             # Express, Sequelize, Socket.io, and middleware patterns
-├── FRONTEND_GUIDELINES.AGENTS.md            # React, TanStack Query, Axios, and styling patterns
+├── AGENTS.md                                # Project overview, structure, commands, and critical patterns
 ├── client/                                  # Frontend React application
+│   ├── AGENTS.md                            # Frontend React, TanStack Query, Axios, and styling patterns
 │   ├── package.json                         # Frontend dependencies
 │   ├── vite.config.js                       # Vite build configuration
 │   ├── eslint.config.js                     # ESLint rules
@@ -69,7 +68,9 @@ ChatIn/
 │       ├── main.jsx                         # React entry with provider hierarchy
 │       ├── App.jsx                          # Router configuration
 │       ├── styles.css                       # Global styles + Tailwind theme
+│       ├── lib/                             # Shared utility functions and libraries (utils.js)
 │       ├── components/                      # Reusable UI components
+│       │   ├── ui/                          # Generic UI primitives (emoji-picker.jsx, popover.jsx)
 │       │   ├── ChatPanel.jsx                # Main chat interface
 │       │   ├── Loading.jsx                  # Loading indicator
 │       │   ├── NoChat.jsx                   # Empty chat state
@@ -95,6 +96,7 @@ ChatIn/
 │           │   ├── addContact.jsx
 │           │   ├── fetchContacts.jsx
 │           │   ├── fetchMessages.jsx
+│           │   ├── reactToMessage.jsx
 │           │   └── sendMessage.jsx
 │           └── hooks/                       # Custom React hooks
 │               ├── useAuth.jsx
@@ -103,6 +105,7 @@ ChatIn/
 │               └── useValidate.jsx
 │
 └── server/                                  # Backend Express application
+    ├── AGENTS.md                            # Backend Express, Sequelize, Socket.io, and middleware patterns
     ├── package.json                         # Backend dependencies
     ├── index.js                             # Express app entry point
     ├── socket.js                            # Socket.io setup
@@ -131,6 +134,10 @@ ChatIn/
         ├── upload.routes.js
         └── verification.routes.js
 ```
+
+---
+
+## 3. Development Setup & Commands
 
 ### Client Commands (`client/`)
 
