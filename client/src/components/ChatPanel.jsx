@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useContext } from "react";
 import useAuth from "../utils/hooks/useAuth";
+import SocketContext from "../utils/contexts/SocketContext";
 import fetchMessages from "../utils/controllers/fetchMessages";
 import sendMessage from "../utils/controllers/sendMessage";
 import reactToMessage from "../utils/controllers/reactToMessage";
@@ -11,6 +12,7 @@ import { EmojiPicker, EmojiPickerSearch, EmojiPickerContent, EmojiPickerFooter }
 const ChatPanel = ({ contact, onBack }) => {
   const { connectionId, connectedUser } = contact;
   const { user } = useAuth();
+  const { onlineUsers } = useContext(SocketContext);
 
   const [pendingMessages, setPendingMessages] = useState([]);
   const [inputText, setInputText] = useState("");
@@ -363,24 +365,31 @@ const ChatPanel = ({ contact, onBack }) => {
               type="button"
               onClick={onBack}
               aria-label="Back to contacts"
-              className="inline-flex items-center justify-center p-0 text-primary-black/70 transition-all duration-200 hover:-translate-x-0.5 hover:text-primary-black focus:outline-none active:-translate-x-1 lg:hidden"
+              className="w-10 h-10 rounded bg-black/10 inline-flex items-center justify-center p-0 text-primary-black transition-all duration-200 focus:outline-none active:-translate-x-1 lg:hidden"
             >
-              <i className="bx bxs-chevron-left text-[1.875rem]"></i>
+              <i className="bx bxs-chevrons-left text-[1.875rem]"></i>
             </button>
           )}
           {onBack && <span aria-hidden="true" className="h-10 w-[3px] bg-primary-black ml-1 mr-2 lg:hidden"></span>}
-          {connectedUser.profilePicUrl ? (
-            <img
-              className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
-              src={connectedUser.profilePicUrl}
-              alt={connectedUser.name}
-            />
-          ) : (
-            <i className="bx bx-user-circle text-[2.75rem] sm:text-[3.125rem]"></i>
-          )}
+          <div className="relative flex-shrink-0">
+            {connectedUser.profilePicUrl ? (
+              <img
+                className="h-11 w-11 rounded-full object-cover border-2 border-primary-black sm:h-[49px] sm:w-[49px]"
+                src={connectedUser.profilePicUrl}
+                alt={connectedUser.name}
+              />
+            ) : (
+              <i className="bx bx-user-circle text-[2.75rem] sm:text-[3.125rem]"></i>
+            )}
+            {onlineUsers.includes(connectedUser.id.toString()) && (
+              <span className="absolute bottom-[2px] right-[2px] w-[13px] h-[13px] bg-[#10b981] border-[2px] border-primary-white rounded-full z-10"></span>
+            )}
+          </div>
         </div>
         <div className="flex min-w-0 flex-col justify-center gap-[6px]">
-          <h2 className="m-0 truncate p-0 text-[1rem] font-bold leading-none sm:text-[1.15rem]">{connectedUser.name}</h2>
+          <h2 className="m-0 truncate p-0 text-[1rem] font-bold leading-none sm:text-[1.15rem] flex items-center gap-2">
+            {connectedUser.name}
+          </h2>
           <span className="m-0 truncate p-0 text-[0.8rem] leading-none sm:text-[0.85rem]">{connectedUser.email}</span>
         </div>
       </section>
@@ -411,7 +420,7 @@ const ChatPanel = ({ contact, onBack }) => {
                           ) : (
                             <div
                               key={idx}
-                              className="flex items-center w-full min-w-[200px] max-w-full gap-2.5 p-2 bg-primary-white border border-[#101010]/25 rounded hover:bg-white/5 transition-colors"
+                              className="flex items-center w-full min-w-[200px] max-w-full gap-2.5 p-2 bg-primary-white border border-[#101010]/25 rounded"
                             >
                               <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 border border-[#101010]/15 rounded bg-black/5 text-primary-black/70">
                                 <i className="bx bxs-file-blank text-[1.4rem]"></i>

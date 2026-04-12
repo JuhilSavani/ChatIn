@@ -23,12 +23,20 @@ io.on("connection", (socket) => {
   if (userId) {
     if (!socketMap[userId]) socketMap[userId] = new Set();
     socketMap[userId].add(socket.id);
+    if (socketMap[userId].size === 1) {
+      io.emit("userOnline", userId);
+    }
   }
+
+  socket.emit("onlineUsers", Object.keys(socketMap));
 
   socket.on("disconnect", () => {
     if (userId && socketMap[userId]) {
       socketMap[userId].delete(socket.id);
-      if (socketMap[userId].size === 0) delete socketMap[userId];
+      if (socketMap[userId].size === 0) {
+        delete socketMap[userId];
+        io.emit("userOffline", userId);
+      }
     }
   });
 });

@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
 
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
+import SocketContext from "../utils/contexts/SocketContext";
 import addContact from "../utils/controllers/addContact";
 import fetchContacts from "../utils/controllers/fetchContacts";
 import ChatPanel from "../components/ChatPanel";
@@ -12,6 +13,7 @@ import axios from "../utils/apis/axios";
 
 const Home = () => {
   const { data, isLoading, isError, error } = fetchContacts();
+  const { onlineUsers } = useContext(SocketContext);
 
   const { user, setIsAuthenticated } = useAuth();
   const dialogRef = useRef(null);
@@ -23,7 +25,10 @@ const Home = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [search, setSearch] = useState(""); 
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [confirmingContact, setConfirmingContact] = useState("");
+  
+  const isProcessing = false; // Hook into AI processing state when available
 
   const location = useLocation(); 
   const navigate = useNavigate();
@@ -132,11 +137,14 @@ const Home = () => {
     });
   };
 
-  // Filter contacts based on the search 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.connectedUser.name.toLowerCase().includes(search.toLowerCase()) ||
-    contact.connectedUser.email.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter contacts based on the search and online status 
+  const filteredContacts = contacts.filter((contact) => {
+    const matchesSearch = contact.connectedUser.name.toLowerCase().includes(search.toLowerCase()) ||
+      contact.connectedUser.email.toLowerCase().includes(search.toLowerCase());
+    const isOnline = onlineUsers.includes(contact.connectedUser.id.toString());
+    const matchesOnline = showOnlineOnly ? isOnline : true;
+    return matchesSearch && matchesOnline;
+  });
 
   return (
     <div className="grid h-full min-h-0 w-full grid-cols-1 grid-rows-1 overflow-hidden bg-beige lg:grid-cols-[minmax(18rem,3fr)_minmax(0,7fr)] lg:rounded-md lg:border-2 lg:border-[#101010]/75 lg:border-b-[5px]">
@@ -150,12 +158,27 @@ const Home = () => {
             </button>
           </div>
           <div className="px-2 pt-2">
-            <div className="relative flex items-center mb-2 p-3 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
-              <i className="bx bx-search text-md absolute left-[20px] top-1/2 -translate-y-1/2 -scale-x-100"></i>
-              <input type="text" placeholder="Search" value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-[35px] pr-2 pl-8 text-inherit bg-secondary-white rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
-              />
+            <div className="flex items-center mb-2 p-3 gap-2 bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5px]">
+              <div className="relative flex-1 min-w-0">
+                <i className="bx bx-search text-md absolute left-[10px] top-1/2 -translate-y-1/2 -scale-x-100"></i>
+                <input type="text" placeholder="Search" value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full h-[35px] pr-2 pl-8 text-inherit bg-secondary-white rounded-md text-sm transition-all duration-300 border-2 border-secondary-black focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:font-normal placeholder:opacity-80"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowOnlineOnly(!showOnlineOnly)}
+                disabled={isProcessing}
+                className={`flex-shrink-0 flex items-center justify-center h-[35px] px-3 rounded-md border-2 border-secondary-black transition-all duration-300 font-semibold text-sm hover:outline-none hover:ring-[3px] hover:ring-[#101010]/75
+                  ${showOnlineOnly 
+                    ? "bg-[#10b981] border-[#101010]/75 text-primary-white" 
+                    : "bg-secondary-white text-primary-black hover:border-[#101010]/75"}
+                  ${isProcessing ? "opacity-40 cursor-not-allowed grayscale" : "cursor-pointer"}
+                `}
+              >
+                Online
+              </button>
             </div>
           </div>
           <div className="min-h-0 flex-1 overflow-y-hidden p-2 pt-0">
@@ -181,15 +204,20 @@ const Home = () => {
                   key={c.id || c.connectedUser.email} 
                   onClick={() => selectContact(c)}
                   className={`flex items-center gap-3 p-3 bg-primary-white rounded-md border-b border-primary-black/25 cursor-pointer transition-colors duration-200 hover:bg-secondary-white sm:gap-4 sm:p-4 ${(selectedContact?.connectedUser?.id === c?.connectedUser?.id) ? "!bg-secondary-white" : ""}`}>
-                    {c.connectedUser.profilePicUrl ? (
-                      <img
-                        className="h-[45px] w-[45px] aspect-square flex-shrink-0 rounded-full border-2 border-primary-black object-cover sm:h-[49px] sm:w-[49px]"
-                        src={c.connectedUser.profilePicUrl}
-                        alt={c.connectedUser.name}
-                      />
-                    ) : (
-                      <i className="bx bx-user-circle text-[2.8rem] sm:text-[3.125rem]"></i>
-                    )}
+                    <div className="relative flex-shrink-0">
+                      {c.connectedUser.profilePicUrl ? (
+                        <img
+                          className="h-[45px] w-[45px] aspect-square rounded-full border-2 border-primary-black object-cover sm:h-[49px] sm:w-[49px]"
+                          src={c.connectedUser.profilePicUrl}
+                          alt={c.connectedUser.name}
+                        />
+                      ) : (
+                        <i className="bx bx-user-circle text-[2.8rem] sm:text-[3.125rem]"></i>
+                      )}
+                      {onlineUsers.includes(c.connectedUser.id.toString()) && (
+                        <span className="absolute bottom-[2px] right-[2px] w-[13px] h-[13px] bg-[#10b981] border-[2px] border-primary-white rounded-full"></span>
+                      )}
+                    </div>
                     <div className="w-full min-w-0 overflow-hidden">
                       <h2 className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">{c.connectedUser.name}</h2>
                       <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">{c.connectedUser.email}</span>

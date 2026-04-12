@@ -12,6 +12,7 @@ const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const { isAuthenticated, user } = useAuth();
   const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const queryClient = useQueryClient();
  
@@ -55,6 +56,18 @@ export const SocketProvider = ({ children }) => {
         }
       });
 
+      socketInstance.on("onlineUsers", (users) => {
+        setOnlineUsers(users);
+      });
+
+      socketInstance.on("userOnline", (userId) => {
+        setOnlineUsers((prev) => [...new Set([...prev, userId])]);
+      });
+
+      socketInstance.on("userOffline", (userId) => {
+        setOnlineUsers((prev) => prev.filter((id) => id !== userId));
+      });
+
       setSocket(socketInstance);
 
       return () => { // Disconnects on exiting the web app
@@ -83,7 +96,7 @@ export const SocketProvider = ({ children }) => {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ socket, connectSocket, disconnectSocket }}>
+    <SocketContext.Provider value={{ socket, connectSocket, disconnectSocket, onlineUsers }}>
       {children}
     </SocketContext.Provider>
   );
