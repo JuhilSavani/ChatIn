@@ -19,6 +19,8 @@ Before you begin, ensure that you have the following installed on your machine:
 - **npm** (v6.x or higher): Package managers to install dependencies.
 - **PostgreSQL**: The database used for storing user information. Ensure you have it installed and set up locally or have access to a remote PostgreSQL instance.
 
+---
+
 ## Installation
 
 To set up ChatIn locally, follow these steps:
@@ -69,46 +71,43 @@ This project uses PostgreSQL as its database management system. Follow the steps
 
 8. Open your browser and access the application at http://localhost:3000.
 
+---
+
 ## Real-Time Communication with WebSockets
 WebSockets facilitate full-duplex communication between the client and server, enabling real-time data exchange without the overhead of repeated HTTP requests. In this project, WebSockets are used for live messaging and real-time contact list updates. Here’s how it works:
 
 1. **Connection Establishment:**
-    - When a user connects to the application, the client upgrades the connection to a WebSocket.
-    - During this process, the server assigns a unique socket ID to the client and associates it with the user’s user ID in memory (e.g., a key-value store or database).
+    - When a user connects to the application, the client upgrades the standard HTTP connection to WebSocket.
+    - During this process, the server assigns a unique socket ID to the client and associates it with the user's UID in memory, allowing for multiple socket IDs per user (e.g., for multiple tabs).
 
 2. **Message Routing:**
-    - When a user sends a message, the server identifies the recipient’s user ID and retrieves the corresponding socket ID.
-    - Using this socket ID, the server sends the message directly to the intended recipient’s WebSocket connection.
+    - When a user sends a message to a friend, the server identifies the recipient’s UID and retrieves the corresponding active socket IDs.
+    - Using these socket IDs, the server sends the message directly to all active WebSocket connections of the intended recipient.
 
-3. **Efficient Broadcasting:**
-    - Instead of broadcasting messages to all connected clients, the server targets specific recipients based on their user ID and socket ID mapping.
-    - This ensures messages are delivered only to the relevant user, improving performance and reducing unnecessary data transfer.
+3. **Updating Contact List:**
+    - When a user adds a new contact and initiates the conversation with a message, the server updates the recipient’s contact list in the database to include the new contact.
+    - The server broadcasts this update to all of the recipient’s active clients via WebSockets, ensuring the new contact is immediately reflected in their contact list accross the browser tabs.
 
-4. **Real-Time Contact Updates:**
-    - When a user adds a new contact and sends the first message, the server updates the recipient’s contact list in the database to include the new contact.
-    - Simultaneously, the server broadcasts this update to the recipient’s client via WebSockets, ensuring the new contact is immediately reflected in their contact list without requiring a manual refresh.
-
-5. **Event Handling:**
-    - The server listens for specific WebSocket events (e.g., message, disconnect) and performs appropriate actions.
-    - For example, when a user disconnects, the server removes their socket ID from the mapping to prevent stale connections.
+4. **Tearing Down:**
+    - When a user disconnects, the server removes their specific socket ID from the mapping to prevent stale connections but keeps the user online if they have other active tabs.
 
 ### Example Flow:
 
 1. **Connection:**
-    - User A connects and their user ID (userA) is mapped to a socket ID (socket123).
-    - User B connects and their user ID (userB) is mapped to a socket ID (socket456).
+    - User A connects and their user ID (userA) is mapped to a set of active socket IDs (e.g., socket123).
+    - User B connects and their user ID (userB) is mapped to their active socket IDs (e.g., socket456, socket789 if open in multiple tabs).
 
 2. **Message Sending:**
     - User A sends a message to User B.
-    - The server looks up userB’s socket ID (socket456) and sends the message directly to their WebSocket connection.
+    - The server looks up userB’s socket IDs (socket456, socket789) and sends the message directly to all of their active WebSocket connections.
 
 3. **Disconnection:**
-    - If User B disconnects, their socket ID (socket456) is removed from the mapping.
-    - Future messages to User B are stored in the database, and when User B reconnects, the client retrieves the updated messages.
+    - If User B closes one tab, that specific socket ID (socket456) is removed from the mapping, leaving others active.
+    - If User B has no more active connections, future messages to User B are stored in the database, and when User B reconnects, the client retrieves the updated messages.
+
+---
 
 ## Contributing
 Contributions are welcome! If you have suggestions or improvements, please fork the repository and create a pull request.
 
 **Thanks for checking out this project, Happy coding! :rocket:**
-
----
