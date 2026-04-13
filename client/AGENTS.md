@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Component Structure Pattern
+## Component Structure Pattern
 
 From `client/src/pages/Home.jsx`:
 
@@ -57,9 +57,7 @@ const ComponentName = () => {
 export default ComponentName;
 ```
 
----
-
-## 2. Context API Pattern
+## Context API Pattern
 
 From `client/src/utils/contexts/AuthContext.jsx`:
 
@@ -98,29 +96,7 @@ const useAuth = () => useContext(AuthContext);
 export default useAuth;
 ```
 
----
-
-## 3. Provider Hierarchy
-
-From `client/src/main.jsx`:
-
-```jsx
-createRoot(document.getElementById("root")).render(
-  <ResourceProvider>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <SocketProvider>
-          <App />
-        </SocketProvider>
-      </QueryClientProvider>
-    </AuthProvider>
-  </ResourceProvider>
-);
-```
-
----
-
-## 4. React Query Pattern
+## React Query Pattern
 
 **Query hook** (`client/src/utils/controllers/fetchContacts.jsx`):
 
@@ -188,9 +164,7 @@ const sendMessage = () => {
 export default sendMessage;
 ```
 
----
-
-## 5. Axios Configuration
+## Axios Configuration
 
 From `client/src/utils/apis/axios.jsx`:
 
@@ -207,9 +181,7 @@ export default axios.create({
 });
 ```
 
----
-
-## 6. Error Handling Pattern
+## Error Handling Pattern
 
 **Client-side** (consistent throughout):
 
@@ -223,9 +195,7 @@ try {
 }
 ```
 
----
-
-## 7. Socket.io Client Setup
+## Socket.io Client Setup
 
 From `client/src/utils/contexts/SocketContext.jsx`:
 
@@ -264,9 +234,7 @@ const SocketProvider = ({ children }) => {
 };
 ```
 
----
-
-## 8. Validation Hook Pattern
+## Validation Hook Pattern
 
 From `client/src/utils/hooks/useValidate.jsx`:
 
@@ -301,45 +269,7 @@ const useValidate = () => {
 export default useValidate;
 ```
 
----
-
-## 9. Cloudinary Upload Pattern
-
-From `client/src/utils/actions/upload.actions.js`:
-
-```javascript
-export async function uploadChatMedia(file) {
-  // 1. Get signed upload credentials from backend
-  const { data: signData } = await axios.post("/upload/sign-media");
-  const { signature, timestamp, folder, apiKey, cloudName } = signData;
-
-  // 2. Build FormData with signed parameters
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("api_key", apiKey);
-  formData.append("timestamp", timestamp);
-  formData.append("signature", signature);
-  formData.append("folder", folder);
-  formData.append("use_filename", "true");
-  formData.append("unique_filename", "true");
-
-  // 3. Direct upload to Cloudinary
-  const resourceType = file.type.startsWith("image/") ? "image" : "raw";
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
-  const response = await fetch(url, { method: "POST", body: formData });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Upload failed (${response.status})`);
-  }
-
-  return response.json();
-}
-```
-
----
-
-## 10. Styling Guidelines
+## Styling Guidelines
 
 ### Tailwind CSS Theme
 
@@ -384,12 +314,12 @@ className="bg-primary-white rounded-md border-2 border-[#101010]/75 border-b-[5p
 
 **Button pattern (primary):**
 ```jsx
-className="bg-green text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60"
+className="flex-1 bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center justify-center font-semibold hover:bg-secondary-black cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
 ```
 
 **Button pattern (secondary):**
 ```jsx
-className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+className="flex-1 bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex justify-center items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
 ```
 
 **Input pattern:**

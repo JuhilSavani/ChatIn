@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Express Route Pattern
+## Express Route Pattern
 
 From `server/routes/message.routes.js`:
 
@@ -20,16 +20,14 @@ router.post(`/send`, sendMessage);
 export default router;
 ```
 
----
-
-## 2. Express Controller Pattern
+## Express Controller Pattern
 
 From `server/controllers/message.controllers.js`:
 
 ```javascript
 import { Message } from "../models/message.models.js";
 import { User } from "../models/user.models.js";
-import { getSocketId, io } from "../socket.js";
+import { getSocketIds, io } from "../socket.js";
 
 export const sendMessage = async (req, res) => {
   const { connectionId, senderId, recieverId, content, attachments } = req.body;
@@ -50,8 +48,8 @@ export const sendMessage = async (req, res) => {
     });
 
     // 3. Real-time notification
-    const socketId = getSocketId(recieverId);
-    if (socketId) io.to(socketId).emit("newMessage", newMessage);
+    const socketIds = await getSocketIds(recieverId);
+    socketIds.forEach((sid) => io.to(sid).emit("newMessage", newMessage));
 
     // 4. Success response
     return res.status(201).json(newMessage);
@@ -65,9 +63,7 @@ export const sendMessage = async (req, res) => {
 };
 ```
 
----
-
-## 3. Error Response Conventions
+## Error Response Conventions
 
 **Server-side** (`server/controllers/message.controllers.js`):
 
@@ -84,9 +80,7 @@ try {
 }
 ```
 
----
-
-## 4. Sequelize Model Pattern
+## Sequelize Model Pattern
 
 From `server/models/message.models.js`:
 
@@ -138,9 +132,7 @@ Message.belongsTo(User, { foreignKey: "senderId", as: "sender" });
 Message.belongsTo(Connection, { foreignKey: "connectionId", as: "connection" });
 ```
 
----
-
-## 5. Socket.io Server Setup
+## Socket.io Server Setup
 
 From `server/socket.js`:
 
@@ -148,6 +140,7 @@ From `server/socket.js`:
 import express from "express";
 import { Server } from "socket.io";
 import http from "http";
+import { getRedis } from "./config/redis.config.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -162,22 +155,33 @@ const io = new Server(server, {
   },
 });
 
-const socketMap = {};
+const socketKey = (userId) => `user:${userId}`;
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   const userId = socket.handshake.query.userId;
-  if (userId) socketMap[userId] = socket.id;
-  socket.on("disconnect", () => delete socketMap[userId]);
+  if (userId) {
+    const redis = getRedis();
+    await redis.sadd(socketKey(userId), socket.id);
+    await redis.expire(socketKey(userId), 86400);
+  }
+
+  socket.on("disconnect", async () => {
+    if (userId) {
+      const redis = getRedis();
+      await redis.srem(socketKey(userId), socket.id);
+    }
+  });
 });
 
-const getSocketId = (userId) => socketMap[userId];
+const getSocketIds = async (userId) => {
+  const redis = getRedis();
+  return redis.smembers(socketKey(userId));
+};
 
-export { app, server, io, getSocketId };
+export { app, server, io, getSocketIds };
 ```
 
----
-
-## 6. Middleware Pattern
+## Middleware Pattern
 
 From `server/middlewares.js`:
 
@@ -195,9 +199,7 @@ export const upload = multer({
 });
 ```
 
----
-
-## 7. Protected Routes Setup
+## Protected Routes Setup
 
 From `server/index.js`:
 

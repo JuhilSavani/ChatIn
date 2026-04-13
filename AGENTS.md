@@ -32,6 +32,7 @@
 | **WebSocket Server** | Socket.io | 4.8.1 |
 | **ORM** | Sequelize | 6.37.5 |
 | **Database** | PostgreSQL | (pg 8.13.1) |
+| **In-Memory Store** | Redis | ioredis 5.10.1 |
 | **Authentication** | Passport.js + JWT | 0.7.0 / 9.0.2 |
 | **Password Hashing** | bcrypt | 5.1.1 |
 | **File Upload** | Multer + Cloudinary | 2.0.2 / 2.7.0 |
@@ -113,6 +114,7 @@ ChatIn/
     ├── .env.example                         # Environment template
     ├── config/                              # Service configurations
     │   ├── sequelize.config.js              # PostgreSQL/Sequelize
+    │   ├── redis.config.js                  # Redis connection
     │   ├── passport.config.js               # JWT authentication
     │   └── cloudinary.config.js             # Cloudinary setup
     ├── models/                              # Sequelize models
@@ -195,6 +197,9 @@ PORT=4000                               # Server port
 # Database
 PG_URI_DEV=postgres://user:pass@localhost:5432/chatin_dev
 PG_URI_PROD=your_cloud_postgres_uri     # Production database
+
+# Redis
+REDIS_URL=your_redis_tcp_url            # Redis connection string
 
 # Authentication
 JWT_SECRET=your_secure_jwt_secret       # Minimum 32 characters recommended
