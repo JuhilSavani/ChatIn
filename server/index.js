@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import { connectPostgres } from "./config/sequelize.config.js"
+import { connectRedis } from "./config/redis.config.js";
 import { configPassport } from "./config/passport.config.js";
 import authRoutes from "./routes/authorize.routes.js";
 import connectionRoutes from "./routes/connection.routes.js";
@@ -20,6 +21,7 @@ const __dirname = path.resolve();
 
 // Connect the database
 connectPostgres();
+connectRedis();
 
 // Configure passport 
 configPassport();

@@ -73,7 +73,7 @@ export const sendMessage = async (req, res) => {
           connection.status = "pending";
           await connection.save();
           const newConnection = computedConnection(recieverId, connection);
-          const socketIds = getSocketIds(recieverId);
+          const socketIds = await getSocketIds(recieverId);
           socketIds.forEach((sid) => io.to(sid).emit("newConnection", newConnection));
           break;
         case "pending":
@@ -106,7 +106,7 @@ export const sendMessage = async (req, res) => {
       }
     };
 
-    const socketIds = getSocketIds(recieverId);
+    const socketIds = await getSocketIds(recieverId);
     socketIds.forEach((sid) => io.to(sid).emit("newMessage", newMessage));
 
     return res.status(201).json(newMessage);
@@ -183,7 +183,7 @@ export const reactToMessage = async (req, res) => {
     await message.save();
 
     // Emit real-time notification to the receiver
-    const socketIds = getSocketIds(receiverId);
+    const socketIds = await getSocketIds(receiverId);
     socketIds.forEach((sid) =>
       io.to(sid).emit("messageReactionUpdate", {
         messageId: message.id,
