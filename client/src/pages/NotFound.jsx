@@ -8,7 +8,7 @@ const NotFound = () => {
   };
 
   return (
-    <div className="page flex min-h-full w-full items-center justify-center py-4 sm:py-8">
+    <div className="page flex min-h-full w-full items-center justify-center px-2 py-2 sm:p-6">
       <div className="w-full max-w-3xl rounded-md bg-bisque border-2 border-[#101010]/75 border-b-[5px] px-6 py-8 sm:px-10">
         <h1 className="my-4 w-full bg-primary-white border-b-[3px] border-dashed border-primary-black text-[2rem] sm:w-[70%] sm:text-xl">Page Not Found</h1>
         <p className="text-md">

@@ -44,13 +44,9 @@ const EmailVerify = () => {
         setIsLoading(false);
         return;
       }
-      if(parseInt(enteredCode) !== parseInt(resource.verificationCode)){
-        toast.error("Invalid verification code, 😩!");
-        setIsLoading(false);
-        return;
-      }
+      
       if(referrer == 'signup'){
-        const { data } = await axios.post('/authorize/register', resource.userData);
+        const { data } = await axios.post('/authorize/register', { ...resource.userData, otp: enteredCode });
         setIsAuthenticated(true);
         setUser(data?.user);
         setResource({});
@@ -58,7 +54,7 @@ const EmailVerify = () => {
         toast.success("Registration successful, 🥳!");
         navigate("/", { replace: true });
       }else{
-        const { data } = await axios.post('/authorize/passwordlessLogin', { email });
+        const { data } = await axios.post('/authorize/passwordlessLogin', { email, otp: enteredCode });
         setIsAuthenticated(true);
         setUser(data?.user);
         connectSocket();
@@ -67,7 +63,7 @@ const EmailVerify = () => {
       }
     } catch (error) {
       console.error(error?.response?.data.stack || error.stack);
-      toast.error(error?.response?.data || error.message);
+      toast.error(error?.response?.data.message || error.message);
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +85,7 @@ const EmailVerify = () => {
   };
   
   return (
-    <div className="page flex min-h-full w-full items-center justify-center py-4 sm:py-8">
+    <div className="page flex min-h-full w-full items-center justify-center px-2 py-2 sm:p-6">
       <div className="w-full max-w-[500px] rounded-md border-2 border-[#101010]/75 border-b-[5px] bg-beige px-4 pb-4 pt-4 text-sm sm:px-8">
         <span className="block h-[110px] text-center text-[6rem] sm:h-[150px] sm:text-[9rem]"><i className='bx bxs-envelope'></i></span>
         <h1 className="text-center text-[1.9rem] sm:text-xl">Verify your email address</h1>
@@ -106,9 +102,9 @@ const EmailVerify = () => {
           />  
           <label htmlFor="verificationCode" className="block font-semibold mb-1">Enter Verification Code:</label>
           <input type="text" id="verificationCode" name="verificationCode" placeholder="..." className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:text-xl sm:placeholder:text-[1.875rem]" required/>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="submit" className="bg-green text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer">{ isLoading ? "Verifying" : "Verify" }</button>
-            <button className="bg-primary-white text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
+          <div className="flex gap-3">
+            <button type="submit" className="flex-1 bg-green text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer">{ isLoading ? "Verifying" : "Verify" }</button>
+            <button type="button" className="flex-1 bg-primary-white text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
           </div>
         </form>
       </div>

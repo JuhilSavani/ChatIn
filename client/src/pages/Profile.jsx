@@ -143,7 +143,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="grid h-full w-full place-items-center overflow-auto px-4 py-4 sm:px-6 sm:py-6">
+    <div className="grid h-full w-full place-items-center overflow-auto px-2 py-2 sm:p-6">
       <div className="flex w-full max-w-[36rem] flex-col bg-beige rounded-md border-2 border-[#101010]/75 border-b-[5px] px-5 py-6 sm:px-8 sm:py-8 md:px-8">
         <section className="flex flex-col font-semibold text-center profile-pic">
           <h2 className="text-[2rem] sm:text-xl">Your Profile</h2>
