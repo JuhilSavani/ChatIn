@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Project Overview
+## Project Overview
 
 ### What the Application Does
 
@@ -48,9 +48,7 @@
 6. **QR Code Sharing** - Generate scannable QR codes for easy profile sharing
 7. **Email Verification** - Gmail OAuth-based verification (production only)
 
----
-
-## 2. Project Structure
+## Project Structure
 
 ```
 ChatIn/
@@ -137,9 +135,7 @@ ChatIn/
         └── verification.routes.js
 ```
 
----
-
-## 3. Development Setup & Commands
+## Development Setup & Commands
 
 ### Client Commands (`client/`)
 
@@ -217,9 +213,7 @@ GMAIL_REFRESH_TOKEN=your_refresh_token
 SENDER_EMAIL=your_email@gmail.com
 ```
 
----
-
-## 4. File Naming Conventions
+## File Naming Conventions
 
 | Type | Convention | Examples |
 |------|------------|----------|
@@ -260,9 +254,7 @@ import fetchContacts from "../utils/controllers/fetchContacts";
 import axios from "../utils/apis/axios";
 ```
 
----
-
-## 5. Critical Patterns to Follow
+## Critical Patterns to Follow
 
 ### Always Use
 
@@ -307,9 +299,7 @@ import axios from "../utils/apis/axios";
 | `POST /api/upload/sign` | Yes | Get avatar upload signature |
 | `POST /api/upload/sign-media` | Yes | Get media upload signature |
 
----
-
-## 6. Common Tasks Reference
+## Common Tasks Reference
 
 ### Adding a New Page
 
