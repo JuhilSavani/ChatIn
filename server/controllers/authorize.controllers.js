@@ -14,7 +14,7 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
 
-    if (user && bcrypt.compareSync(password, user.password)) {
+    if (user && await bcrypt.compare(password, user.password)) {
       const payload = { 
         id: user.id, 
         name: user.name, 
@@ -59,7 +59,7 @@ export const register = async (req, res) => {
     });
 
   try {    
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       name,
