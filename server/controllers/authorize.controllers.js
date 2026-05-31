@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
+import { confirmOTP } from "../utils/otp.utils.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const NODE_ENV_SECURE = process.env.NODE_ENV === "production";
+const IS_DEV = process.env.NODE_ENV === "development";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -51,7 +53,7 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, otp } = req.body;
   if (!name || !email || !password)
     return res.status(400).json({
       message:
@@ -59,6 +61,12 @@ export const register = async (req, res) => {
     });
 
   try {    
+    if (!IS_DEV) {
+      if (!otp) return res.status(400).json({ message: "Verification code is required." });
+      const isValid = await confirmOTP(email, otp);
+      if (!isValid) return res.status(400).json({ message: "Invalid or expired verification code." });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
@@ -99,12 +107,18 @@ export const register = async (req, res) => {
 };
 
 export const passwordlessLogin = async (req, res) =>{
-  const { email } = req.body;
+  const { email, otp } = req.body;
   if (!email)
     return res.status(400).json({
       message: "Please provide both email to signin.",
     });
   try {
+    if (!IS_DEV) {
+      if (!otp) return res.status(400).json({ message: "Verification code is required." });
+      const isValid = await confirmOTP(email, otp);
+      if (!isValid) return res.status(400).json({ message: "Invalid or expired verification code." });
+    }
+
     const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "User not found!" });
     
