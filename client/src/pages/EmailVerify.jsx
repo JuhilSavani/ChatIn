@@ -13,6 +13,7 @@ const EmailVerify = () => {
 
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSent, setHasSent] = useState(false);
 
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
@@ -76,6 +77,7 @@ const EmailVerify = () => {
       const response =  await axios.get(`/verify/${email}`);
       setResource((prevData) => ({ ...prevData, ...response.data }));
       toast.info("Please check your email to get verification code, 🤗!");
+      setHasSent(true);
     } catch(error) {
       console.error(error?.response?.data.stack || error.stack);
       toast.error("Something went wrong while sending the confirmation email, 😶!");
@@ -85,7 +87,7 @@ const EmailVerify = () => {
   };
   
   return (
-    <div className="page flex min-h-full w-full items-center justify-center px-2 py-2 sm:p-6">
+    <div className="page flex flex-col min-h-full w-full items-center justify-center px-2 py-2 sm:p-6">
       <div className="w-full max-w-[500px] rounded-md border-2 border-[#101010]/75 border-b-[5px] bg-beige px-4 pb-4 pt-4 text-sm sm:px-8">
         <span className="block h-[110px] text-center text-[6rem] sm:h-[150px] sm:text-[9rem]"><i className='bx bxs-envelope'></i></span>
         <h1 className="text-center text-[1.9rem] sm:text-xl">Verify your email address</h1>
@@ -104,10 +106,26 @@ const EmailVerify = () => {
           <input type="text" id="verificationCode" name="verificationCode" placeholder="..." className="px-4 h-[40px] w-full block mb-4 bg-primary-white text-inherit rounded-md text-sm border-2 border-[#101010]/75 transition-all duration-300 focus:outline-none focus:ring-[3px] focus:ring-[#101010]/75 placeholder:text-xl sm:placeholder:text-[1.875rem]" required/>
           <div className="flex gap-3">
             <button type="submit" className="flex-1 bg-green text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer">{ isLoading ? "Verifying" : "Verify" }</button>
-            <button type="button" className="flex-1 bg-primary-white text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer" onClick={handleSend}>{ isSending ? "Sending" : "Send" }</button>
+            <button 
+              type="button" 
+              className={`flex-1 bg-primary-white text-inherit rounded-md text-md px-4 h-[40px] border-2 border-[#101010]/75 transition-all duration-300 hover:ring-2 hover:ring-[#101010]/75 cursor-pointer ${!hasSent && !isSending ? "pulse-border" : ""}`} 
+              onClick={handleSend}
+            >
+              { isSending ? "Sending" : "Send" }
+            </button>
           </div>
         </form>
       </div>
+      <button 
+        type="button" 
+        onClick={() => navigate(-1)} 
+        className="mt-8 flex items-center gap-1.5 text-[#101010]/60 hover:text-[#101010] transition-all duration-200 cursor-pointer font-semibold text-xs tracking-wider uppercase border-b-2 border-transparent hover:border-current pb-0.5"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="currentColor" className="w-3 h-3 mb-0.25">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+        <span>Go Back</span>
+      </button>
     </div>
   );
 };
