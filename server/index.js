@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import { connectPostgres } from "./config/sequelize.config.js"
@@ -27,12 +28,17 @@ connectRedis();
 configPassport();
 
 // Middlewares
+app.use(helmet()); // Sets security headers
+app.disable("x-powered-by"); // Hides express signature
 app.use(cors({ 
   origin: isProduction ?  process.env.APP_ORIGIN : "http://localhost:3000",
   methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
   credentials: true,
 }));
-app.use(express.json());
+// express.json() buffers the full request body into memory before checking the size limit.
+// It rejects after buffering, not during streaming — so oversized payloads still spike memory briefly.
+// More robust protection from this could be using a reverse proxy like Nginx or Caddy.
+app.use(express.json({ limit: "10kb" }));
 app.use(cookieParser());
 app.use(passport.initialize()); // Initialize passport 
 
