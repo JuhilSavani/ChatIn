@@ -10,8 +10,8 @@ const io = new Server(server, {
   cors: {
     origin:
       process.env.NODE_ENV === "production"
-        ? process.env.APP_ORIGIN
-        : "http://localhost:3000",
+        ? (process.env.APP_ORIGIN ? process.env.APP_ORIGIN.split(",").map(o => o.trim()) : [])
+        : ["http://localhost:3000", "https://chatin.justbuildbig.com"],
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
     credentials: true,
   },

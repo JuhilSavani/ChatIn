@@ -30,8 +30,12 @@ configPassport();
 // Middlewares
 app.use(helmet()); // Sets security headers
 app.disable("x-powered-by"); // Hides express signature
+const allowedOrigins = isProduction 
+  ? (process.env.APP_ORIGIN ? process.env.APP_ORIGIN.split(',').map(o => o.trim()) : [])
+  : ["http://localhost:3000", "https://chatin.justbuildbig.com"];
+
 app.use(cors({ 
-  origin: isProduction ?  process.env.APP_ORIGIN : "http://localhost:3000",
+  origin: allowedOrigins,
   methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
   credentials: true,
 }));
