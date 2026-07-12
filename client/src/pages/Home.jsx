@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import NoChat from "../components/NoChat";
 import useAuth from "../utils/hooks/useAuth";
@@ -16,6 +17,7 @@ const Home = () => {
   const { onlineUsers } = useContext(SocketContext);
 
   const { user, setIsAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
   const dialogRef = useRef(null);
   const logoutDialogRef = useRef(null);
   const confirmDialogRef = useRef(null);
@@ -43,6 +45,7 @@ const Home = () => {
     closeLogoutDialog();
     try {
       await axios.post('/authorize/logout');
+      queryClient.clear();
       setIsAuthenticated(false);
       toast.success("Logged out successfully, 😭!");
       navigate("/sign-in", { replace: true });
