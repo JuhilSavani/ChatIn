@@ -21,6 +21,7 @@ const ChatPanel = ({ contact, onBack }) => {
   const messageRef = useRef(null);
   const chatAreaRef = useRef(null);
   const fileInputRef = useRef(null);
+  const removeReactionDialogRef = useRef(null);
 
   const { data, isLoading, isError, error } = fetchMessages(connectionId);
   const { mutateAsync: sendMsgAsync } = sendMessage();
@@ -28,6 +29,16 @@ const ChatPanel = ({ contact, onBack }) => {
 
   const [activeEmojiPickerId, setActiveEmojiPickerId] = useState(null);
   const [reactionToRemove, setReactionToRemove] = useState(null);
+
+  useEffect(() => {
+    if (reactionToRemove) {
+      removeReactionDialogRef.current?.showModal();
+    } else {
+      if (removeReactionDialogRef.current?.open) {
+        removeReactionDialogRef.current?.close();
+      }
+    }
+  }, [reactionToRemove]);
 
   const handleReactToMessage = useCallback((messageId, reaction) => {
     reactToMessageMutate({
@@ -611,34 +622,39 @@ const ChatPanel = ({ contact, onBack }) => {
         </div>
       </section>
 
-      {reactionToRemove && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-black/25 backdrop-blur-sm">
-          <div className="w-[min(400px,calc(100vw-2rem))] rounded-md border-2 border-primary-black/25 bg-bisque text-primary-black p-5 sm:p-6 flex flex-col items-center">
-            <p className="text-md font-semibold mb-5 text-center">
+      <dialog
+        ref={removeReactionDialogRef}
+        onClose={() => setReactionToRemove(null)}
+        className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25 z-50"
+      >
+        {reactionToRemove && (
+          <div className="p-5 sm:p-8">
+            <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">Remove Reaction</h3>
+            <p className="text-sm font-medium mb-6">
               Are you sure you want to remove your <span className="text-[1.2rem]">{reactionToRemove.emoji}</span> reaction?
             </p>
-            <div className="flex w-full justify-center gap-4">
+            <div className="flex justify-center gap-4">
               <button 
                 type="button" 
-                className="flex-1 bg-primary-white text-sm py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
-                onClick={() => setReactionToRemove(null)}
+                className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+                onClick={() => removeReactionDialogRef.current?.close()}
               >
                 Cancel
               </button>
               <button 
                 type="button" 
-                className="flex-1 bg-primary-black text-primary-white text-sm py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 font-semibold hover:bg-secondary-black cursor-pointer"
+                className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer"
                 onClick={() => {
                   handleReactToMessage(reactionToRemove.messageId, reactionToRemove.emoji);
-                  setReactionToRemove(null);
+                  removeReactionDialogRef.current?.close();
                 }}
               >
                 Remove
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </dialog>
     </div>
   );
 };

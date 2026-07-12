@@ -268,6 +268,71 @@ const useValidate = () => {
 
 export default useValidate;
 ```
+## Modal Pattern
+
+Modals should be built using the native HTML `<dialog>` element controlled by React refs and `useEffect` to synchronize visibility with the modal state.
+
+### 1. Dialog Ref & State Synchronizer
+
+```jsx
+const dialogRef = useRef(null);
+const [modalData, setModalData] = useState(null); // holds data when modal is open, null when closed
+
+// Sync modal visibility with modalData state
+useEffect(() => {
+  if (modalData) {
+    dialogRef.current?.showModal();
+  } else {
+    if (dialogRef.current?.open) {
+      dialogRef.current?.close();
+    }
+  }
+}, [modalData]);
+```
+
+### 2. Dialog Component / Markup
+
+The dialog element requires the `onClose` handler to synchronize state when the user dismisses the dialog natively (e.g., using the Escape key):
+
+```jsx
+<dialog
+  ref={dialogRef}
+  onClose={() => setModalData(null)}
+  className="absolute top-1/2 left-1/2 w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-black/25 border-b-[5px] bg-bisque text-primary-black backdrop:bg-primary-black/25 z-50"
+>
+  {modalData && (
+    <div className="p-5 sm:p-8">
+      <h3 className="text-center text-lg border-b-[3px] border-dashed border-primary-black mb-4">
+        {/* Title */}
+      </h3>
+      <p className="text-sm font-medium mb-6">
+        {/* Body Text / Description */}
+      </p>
+      
+      {/* Footer Actions */}
+      <div className="flex justify-center gap-4">
+        <button 
+          type="button" 
+          className="bg-primary-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:ring-2 hover:ring-[#101010]/75 cursor-pointer"
+          onClick={() => dialogRef.current?.close()}
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          className="bg-primary-black text-white text-md py-2 px-4 rounded-md border-2 border-[#101010]/75 transition-all duration-300 inline-flex items-center font-semibold hover:bg-secondary-black cursor-pointer"
+          onClick={() => {
+            // Handle Action
+            dialogRef.current?.close();
+          }}
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  )}
+</dialog>
+```
 
 ## Styling Guidelines
 
