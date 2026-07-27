@@ -20,7 +20,6 @@ export const SocketProvider = ({ children }) => {
     if (isAuthenticated) {
       const socketInstance = io(BACKEND_URL, {
         withCredentials: true,
-        query: { userId: user.id },
       });
       
       // socketInstance.on("connect", () => console.log("Socket connected"));

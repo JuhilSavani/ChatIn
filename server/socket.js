@@ -1,6 +1,7 @@
 import express from "express";
 import { Server } from "socket.io";
 import http from "http";
+import jwt from "jsonwebtoken";
 import { getRedis } from "./config/redis.config.js";
 
 const app = express();
@@ -43,17 +44,31 @@ const getOnlineUserIds = async () => {
   return keys.map((k) => k.replace("user:", ""));
 };
 
+// ─── Authentication middleware ───────────────────────────────────────────────
+
+io.use((socket, next) => {
+  try {
+    const rawCookie = socket.handshake.headers.cookie || "";
+    const token = rawCookie.split("; ").find(c => c.startsWith("chatinToken="))?.split("=")[1];
+    if (!token) return next(new Error("Authentication required"));
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    socket.userId = String(payload.id);
+    next();
+  } catch (err) {
+    next(new Error("Invalid or expired token"));
+  }
+});
+
 // ─── Socket handlers ─────────────────────────────────────────────────────────
 
 io.on("connection", async (socket) => {
-  const userId = socket.handshake.query.userId;
+  const userId = socket.userId;
 
-  if (userId) {
-    const count = await addSocket(userId, socket.id);
-    if (count === 1) {
-      // First connection for this user — they just came online
-      io.emit("userOnline", userId);
-    }
+  const count = await addSocket(userId, socket.id);
+  if (count === 1) {
+    // First connection for this user — they just came online
+    io.emit("userOnline", userId);
   }
 
   // Send the full online list to the newly connected socket only
@@ -61,12 +76,10 @@ io.on("connection", async (socket) => {
   socket.emit("onlineUsers", onlineUsers);
 
   socket.on("disconnect", async () => {
-    if (userId) {
-      const remaining = await removeSocket(userId, socket.id);
-      if (remaining === 0) {
-        // No sockets left — user is fully offline
-        io.emit("userOffline", userId);
-      }
+    const remaining = await removeSocket(userId, socket.id);
+    if (remaining === 0) {
+      // No sockets left — user is fully offline
+      io.emit("userOffline", userId);
     }
   });
 });
