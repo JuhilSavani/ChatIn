@@ -1,8 +1,4 @@
-import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
-
-const JWT_SECRET = process.env.JWT_SECRET;
-const NODE_ENV_SECURE = process.env.NODE_ENV === "production";
 
 export const updateProfile = async (req, res) => {
   try {
@@ -23,27 +19,14 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    // Construct payload
-    const payload = {
+    return res.status(200).json({ message: "Profile updated successfully", user: {
       id: user.id,
       name: user.name,
       email: user.email,
       profilePicUrl: user.profilePicUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    };
-
-    // Create JWT and set cookie
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
-
-    res.cookie("chatinToken", token, {
-      httpOnly: true,
-      secure: NODE_ENV_SECURE,
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
-    return res.status(200).json({ message: "Profile updated successfully", user: payload });
+    }});
   } catch (error) {
     console.error(error.stack);
     return res.status(500).json({ message: "Server error. Please try again later." });

@@ -17,20 +17,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (user && await bcrypt.compare(password, user.password)) {
-      const payload = { 
-        id: user.id, 
-        name: user.name, 
-        email: user.email, 
-        profilePicUrl: user.profilePicUrl,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      }
-
-      const token = jwt.sign(
-        payload, 
-        JWT_SECRET, 
-        { expiresIn: "7d" }
-      );
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "7d" });
 
       res.cookie("chatinToken", token, {
         httpOnly: true,
@@ -39,7 +26,14 @@ export const login = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      return res.status(200).json({ user: payload });
+      return res.status(200).json({ user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        profilePicUrl: user.profilePicUrl,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      }});
     } else {
       if (!user) return res.status(404).json({ message: "User not found!" });
       return res.status(401).json({ message: "Invalid password!" });
@@ -75,20 +69,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const payload = { 
-      id: newUser.id, 
-      name: newUser.name, 
-      email: newUser.email, 
-      profilePicUrl: newUser.profilePicUrl,
-      createdAt: newUser.createdAt,
-      updatedAt: newUser.updatedAt,
-    }
-
-    const token = jwt.sign(
-      payload, 
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.cookie("chatinToken", token, {
       httpOnly: true,
@@ -97,7 +78,14 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
 
-    return res.status(201).json({ user: payload }); // Created 
+    return res.status(201).json({ user: {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      profilePicUrl: newUser.profilePicUrl,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
+    }}); // Created 
   } catch (error) {
     console.error(error.stack);
     return res
@@ -122,20 +110,7 @@ export const passwordlessLogin = async (req, res) =>{
     const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "User not found!" });
     
-    const payload = { 
-      id: user.id, 
-      name: user.name, 
-      email: user.email, 
-      profilePicUrl: user.profilePicUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    }
-
-    const token = jwt.sign(
-      payload, 
-      JWT_SECRET, 
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.cookie("chatinToken", token, {
       httpOnly: true,
@@ -144,7 +119,14 @@ export const passwordlessLogin = async (req, res) =>{
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    return res.status(200).json({ user: payload });
+    return res.status(200).json({ user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      profilePicUrl: user.profilePicUrl,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }});
   } catch (error) {
     console.error(error.stack);
     return res
