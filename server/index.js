@@ -28,7 +28,17 @@ connectRedis();
 configPassport();
 
 // Middlewares
-app.use(helmet()); // Sets security headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "connect-src": ["'self'", "https://cdn.jsdelivr.net"],
+        "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
+      },
+    },
+  })
+); // Sets security headers
 app.disable("x-powered-by"); // Hides express signature
 const allowedOrigins = isProduction 
   ? (process.env.APP_ORIGIN ? process.env.APP_ORIGIN.split(',').map(o => o.trim()) : [])
