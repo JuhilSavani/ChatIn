@@ -21,8 +21,21 @@ export const SocketProvider = ({ children }) => {
       const socketInstance = io(BACKEND_URL, {
         withCredentials: true,
       });
+
+      const forceReconnect = () => {
+        if (!socketInstance.connected) {
+          socketInstance.connect();
+        }
+      };
+      window.addEventListener("online", forceReconnect);
       
-      // socketInstance.on("connect", () => console.log("Socket connected"));
+      socketInstance.on("connect", () => {
+        console.log("Socket connected/reconnected");
+        // Force refetch on reconnect to sync missed messages
+        queryClient.invalidateQueries({ queryKey: ["messages"] });
+        queryClient.invalidateQueries({ queryKey: ["connections"] });
+      });
+      
       // socketInstance.on("disconnect", () => console.log("Socket disconnected"));
       socketInstance.on("newConnection", () => {
         queryClient.invalidateQueries(["connections"]);
@@ -70,6 +83,7 @@ export const SocketProvider = ({ children }) => {
       setSocket(socketInstance);
 
       return () => { // Disconnects on exiting the web app
+        window.removeEventListener("online", forceReconnect);
         socketInstance.disconnect();
         setSocket(null);
       };
