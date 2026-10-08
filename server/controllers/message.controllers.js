@@ -45,7 +45,7 @@ export const getMessages = async (req, res) => {
 };
 
 export const sendMessage = async (req, res) => {
-  const { connectionId, senderId, recieverId, content, attachments } = req.body;
+  const { connectionId, senderId, recieverId, content, attachments, timestamp } = req.body;
 
   try {
     if (!connectionId || !senderId || !recieverId || (!content && !attachments?.length))
@@ -90,6 +90,7 @@ export const sendMessage = async (req, res) => {
       senderId, 
       content: content || null,
       attachments: attachments?.length ? attachments : null,
+      ...(timestamp && { timestamp }),
     });
 
     const newMessage = { 
